@@ -6,6 +6,7 @@ https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-conf
 https://learn.microsoft.com/en-us/azure/storage/blobs/blob-upload-function-trigger-javascript?tabs=storage-resource-visual-studio-code%2Ccomputer-vision-azure-portal%2Ccosmos-db-azure-portal
 https://stackoverflow.com/questions/19619450/how-do-i-add-file-to-remote-git-repo-github-without-cloning-the-whole-repo-fir
 https://stackoverflow.com/questions/22403218/html-automatically-fetching-json-file-from-github-repo
+https://git-scm.com/book/en/v2/Git-Tools-Submodules
 
 Project order
 1. Reproduce existing spreadsheet main page based hardcoded JSON file
