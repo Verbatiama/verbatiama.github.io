@@ -14,6 +14,8 @@ https://stackoverflow.com/questions/22403218/html-automatically-fetching-json-fi
 
 https://git-scm.com/book/en/v2/Git-Tools-Submodules
 
+https://github.com/gitname/react-gh-pages
+
 Project order
 1. Reproduce existing spreadsheet main page based hardcoded JSON file
 2. Convert JSON to CosmoDB
