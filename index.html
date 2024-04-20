@@ -4,8 +4,9 @@
 <body>
     <div style="text-align: center;">
 
-        <h1>Adam's Legendary Creatures</h1>
         <div class="center-Div">
+            <h1>Adam's Legendary Creatures</h1>
+            <button onclick="fetchData(displayCocktail,(data) => data.Owned == '0')">Not Owned</button>
             <table id="apiTable" class="styled-table">
                 <!-- The table content will be dynamically generated -->
             </table>
@@ -63,7 +64,7 @@
 
     function displayCocktail(data) {
         const tableBody = document.getElementById("apiTable");
-
+        tableBody.innerHTML = "";
         const row = tableBody.insertRow();
         row.insertCell().textContent = "Name";
         row.insertCell().textContent = "Owned";
@@ -85,22 +86,26 @@
     }
 
 
-    function fetchData() {
+    function fetchData(resultFunction, filterFunction = null) {
         fetch("https://raw.githubusercontent.com/Verbatiama/LegendaryCreatureCollectionStorage/main/collection.json")
             .then((response) => {
                 if (response.ok) {
                     return response.json();
                 } else {
-                    throw new Error("NETWORK RESPONSE ERROR");
+                    throw new Error("NETWORK RESPONSE ERROR");s
                 }
             })
             .then((data) => {
-                console.log(data); // Log the fetched data to the console
-                displayCocktail(data); // Call the function to display the data
+                if(filterFunction){
+                    resultFunction(data.filter(filterFunction));
+                }
+                else{
+                    resultFunction(data); // Call the function to display the data
+                }   
             })
             .catch((error) => console.error("FETCH ERROR:", error));
 
     }
-
+fetchData(displayCocktail)
 
 </script>
