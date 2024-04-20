@@ -17,10 +17,10 @@ https://git-scm.com/book/en/v2/Git-Tools-Submodules
 https://github.com/gitname/react-gh-pages
 
 Project order
-1. Reproduce existing spreadsheet main page based hardcoded JSON file
-2. Commit the JSON file to this repo
-3. Fetch the JSON data onto the page
-4. Render the JSON as a table
+1. ~~Reproduce existing spreadsheet main page based hardcoded JSON file~~
+2. ~~Commit the JSON file to this repo~~
+3. ~~Fetch the JSON data onto the page~~
+4. ~~Render the JSON as a table~~
 6. Convert JSON file to CosmoDB
 7. Replace API call to point to CosmoDB
 8. Convert PowerShell script to an Azure funtion
