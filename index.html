@@ -93,20 +93,19 @@
                 if (response.ok) {
                     return response.json();
                 } else {
-                    throw new Error("NETWORK RESPONSE ERROR");s
+                    throw new Error("NETWORK RESPONSE ERROR");
                 }
             })
             .then((data) => {
-                if(filterFunction){
+                if (filterFunction) {
                     resultFunction(data.filter(filterFunction));
                 }
-                else{
+                else {
                     resultFunction(data); // Call the function to display the data
-                }   
+                }
             })
             .catch((error) => console.error("FETCH ERROR:", error));
 
     }
-fetchData(displayCocktail)
 
 </script>
