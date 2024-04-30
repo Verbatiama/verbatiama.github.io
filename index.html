@@ -87,7 +87,7 @@
     }
 
 
-    function fetchData(resultFunction, filterFunction = null) {
+    function fetchData(resultFunction, filterFunction = null, sortFunction = null) {
         fetch("https://raw.githubusercontent.com/Verbatiama/LegendaryCreatureCollectionStorage/main/collection.json")
             .then((response) => {
                 if (response.ok) {
@@ -98,11 +98,13 @@
             })
             .then((data) => {
                 if (filterFunction) {
-                    resultFunction(data.filter(filterFunction));
+                    data = data.filter(filterFunction);
                 }
-                else {
-                    resultFunction(data); // Call the function to display the data
+                if (sortFunction){
+                    data = data.sort(sortFunction);
                 }
+                
+                resultFunction(data); // Call the function to display the data
             })
             .catch((error) => console.error("FETCH ERROR:", error));
 
