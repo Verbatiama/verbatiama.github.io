@@ -2,7 +2,7 @@
 
 function displayCocktail(data) {
     const cardCountElement = document.getElementById("currentCards");
-    cardCountElement.innerHTML = "Current cards " + item.length;
+    cardCountElement.innerHTML = "Current cards " + data.length;
     const tableBody = document.getElementById("apiTable");
     tableBody.innerHTML = "";
     const row = tableBody.insertRow();
