@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <script type="text/javascript" src="index.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
 <link href="index.css" rel="stylesheet" type="text/css" />
 <body>
-    <div style="text-align: center;">
 
-        <div class="center-Div">
-            <h1>Adam's Legendary Creatures</h1>
+    <h1 style="text-align: center;">Adam's Legendary Creatures</h1>
+    <div style="text-align: center;" class="container">
+
+        <div class="gragh">
             <div><p><span id="currentCards"></span></p></div>
             <button onclick="fetchData(displayCocktail)">Full</button>
             <button onclick="fetchData(displayCocktail,(data) => data.Owned == '0')">Not Owned</button>
@@ -14,6 +16,12 @@
                 <!-- The table content will be dynamically generated -->
             </table>
         </div>
+        
+        <div class="gragh" >
+            <div id="pie-chart-container1" ></div>
+            <div id="pie-chart-container2" ></div>
+          </div>
+          
     </div>
 </body>
 

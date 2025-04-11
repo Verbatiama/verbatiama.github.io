@@ -1,8 +1,4 @@
 
-.center-Div {
-    width: 500px;
-    margin: 0 auto;
-}
 
 .styled-table {
     border-collapse: collapse;
@@ -40,3 +36,13 @@
     font-weight: bold;
     color: #009879;
 }
+
+.container {
+  display: flex;
+}
+.gragh {
+  width: 50%;
+  padding: 20px;
+  text-align: center;
+}
+

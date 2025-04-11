@@ -109,3 +109,68 @@ console.log("A Switch was made - " + x.innerHTML)
 }
 
 fetchData(displayCocktail)
+
+document.addEventListener("DOMContentLoaded", fetchData(function (data) {
+  Highcharts.chart('pie-chart-container1', {
+      chart: {
+          type: 'pie'
+      },
+      title: {
+          text: 'Collection Quantity'
+      },
+      tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+      },
+      plotOptions: {
+          pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                  enabled: true,
+                  format: '{point.name}: {point.percentage:.1f}%'
+              }
+          }
+      },
+      series: [{
+          name: 'Share',
+          colorByPoint: true,
+          data: [
+              { name: 'Owned', y: data.reduce((sum, item) => sum + item.Owned, 0), color: '#FFA500' },
+              { name: 'Unowned', y: data.length - data.reduce((sum, item) => sum + item.Owned, 0), color: '#6495ED' }
+          ]
+      }]
+  });
+}));
+
+document.addEventListener("DOMContentLoaded", fetchData(function (data) {
+  console.log(data.filter(item => item.Owned == 1).reduce((sum, item) => sum + item.Price, 0))
+  Highcharts.chart('pie-chart-container2', {
+      chart: {
+          type: 'pie'
+      },
+      title: {
+          text: 'Collection value'
+      },
+      tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+      },
+      plotOptions: {
+          pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                  enabled: true,
+                  format: '{point.name}: {point.percentage:.1f}%'
+              }
+          }
+      },
+      series: [{
+          name: 'Share',
+          colorByPoint: true,
+          data: [
+              { name: 'Cost Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#008000'  },
+              { name: 'Cost Unowned', y: data.filter(item => item.Owned == 0).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: ' #FF0000' }
+          ]
+      }]
+  });
+}));
