@@ -8,7 +8,7 @@
     <h1 style="text-align: center;">Adam's Legendary Creatures</h1>
     <div style="text-align: center;" class="container">
 
-        <div class="gragh">
+        <div class="gragh" style="z-index: 2;">
             <div><p><span id="currentCards"></span></p></div>
             <button onclick="fetchData(displayCocktail)">Full</button>
             <button onclick="fetchData(displayCocktail,(data) => data.Owned == '0')">Not Owned</button>
@@ -17,7 +17,7 @@
             </table>
         </div>
         
-        <div class="gragh" >
+        <div class="gragh" style="z-index: 1;" >
             <div id="pie-chart-container1" ></div>
             <div id="pie-chart-container2" ></div>
           </div>
