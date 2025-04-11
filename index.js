@@ -168,8 +168,8 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
           name: 'Share',
           colorByPoint: true,
           data: [
-              { name: 'Cost Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#008000'  },
-              { name: 'Cost Unowned', y: data.filter(item => item.Owned == 0).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: ' #FF0000' }
+              { name: 'Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#008000'  },
+              { name: 'Unowned', y: data.filter(item => item.Owned == 0).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: ' #FF0000' }
           ]
       }]
   });

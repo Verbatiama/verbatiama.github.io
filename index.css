@@ -10,6 +10,7 @@
 
 .styled-table thead tr {
     background-color: #009879;
+    float:none;
     color: #ffffff;
     text-align: left;
 }
@@ -38,7 +39,15 @@
 
 .container {
   display: flex;
+  flex-direction: column; /* Default: stacked */
 }
+
+@media (orientation: landscape) {
+    .container {
+        flex-direction: row; /* Side by side */
+    }
+}
+
 .gragh {
   width: 50%;
   padding: 20px;
