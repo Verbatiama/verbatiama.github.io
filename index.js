@@ -134,8 +134,8 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
             name: 'Share',
             colorByPoint: true,
             data: [
-                { name: 'Owned', y: data.reduce((sum, item) => sum + item.Owned, 0), color: '#FFA500' },
-                { name: 'Unowned', y: data.length - data.reduce((sum, item) => sum + item.Owned, 0), color: '#6495ED' }
+                { name: 'Owned', y: data.reduce((sum, item) => sum + item.Owned, 0), color: '#FFC1CC' },
+                { name: 'Unowned', y: data.length - data.reduce((sum, item) => sum + item.Owned, 0), color: '#C3B1E1' }
             ]
         }]
     });
@@ -167,8 +167,8 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
             name: 'Share',
             colorByPoint: true,
             data: [
-                { name: 'Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#008000' },
-                { name: 'Unowned', y: data.filter(item => item.Owned == 0).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: ' #FF0000' }
+                { name: 'Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#FFDAB9' },
+                { name: 'Unowned', y: data.filter(item => item.Owned == 0).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: ' #B2C8BA' }
             ]
         }]
     });
