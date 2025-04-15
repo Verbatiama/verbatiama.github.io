@@ -142,7 +142,6 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
 }));
 
 document.addEventListener("DOMContentLoaded", fetchData(function (data) {
-    console.log(data.filter(item => item.Owned == 1).reduce((sum, item) => sum + item.Price, 0))
     Highcharts.chart('pie-chart-container2', {
         chart: {
             type: 'pie'
