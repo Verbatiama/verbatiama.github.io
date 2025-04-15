@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
           type: 'pie'
       },
       title: {
-          text: 'Collection value'
+          text: 'Collection value (USD)'
       },
       tooltip: {
           pointFormat: '{series.name}: <b>${point.y:.2f}</b>'
