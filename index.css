@@ -26,6 +26,10 @@
     background-color: #f3f3f3;
 }
 
+.styled-table tbody tr:nth-of-type(odd) {
+    background-color: #ffffff;
+}
+
 .styled-table tbody tr:last-of-type {
     border-bottom: 2px solid #009879;
 }
