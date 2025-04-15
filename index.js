@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
             text: 'Collection Quantity'
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.y:.1f}</b>'
+            pointFormat: '{series.name}: <b>{point.y}</b>'
         },
         plotOptions: {
             pie: {
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '{point.name}: {point.y:.1f}'
+                    format: '{point.name}: {point.y}'
                 }
             }
         },
