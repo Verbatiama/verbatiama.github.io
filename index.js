@@ -104,7 +104,6 @@ if (shouldSwitch) {
     switching = true;
   }
 }
-console.log("A Switch was made - " + x.innerHTML)
 }
 }
 
