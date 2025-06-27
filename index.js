@@ -25,16 +25,26 @@ function displayCocktail(data) {
 
 }
 
+let lastSortedColumn = null;
+let lastSortDirection = 1; // 1 for ascending, -1 for descending
+
 function sortableRow(row, name, isNumeric = false) {
     row.textContent = name;
     row.onclick = function () {
+        // Toggle sort direction if the same column, otherwise reset to ascending
+        if (lastSortedColumn === name) {
+            lastSortDirection *= -1;
+        } else {
+            lastSortedColumn = name;
+            lastSortDirection = 1;
+        }
         fetchData(displayCocktail, null, (a, b) => {
             if (isNumeric) {
                 const numA = parseFloat(a[name].replace('$', ''));
                 const numB = parseFloat(b[name].replace('$', ''));
-                return numA - numB;
+                return (numA - numB) * lastSortDirection;
             }
-            return a[name].trim().localeCompare(b[name].trim());
+            return a[name].trim().localeCompare(b[name].trim()) * lastSortDirection;
         });
     };
 }
