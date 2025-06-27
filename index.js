@@ -1,23 +1,21 @@
-
-
 function displayCocktail(data) {
     const cardCountElement = document.getElementById("currentCards");
     cardCountElement.innerHTML = "Current cards " + data.length;
     const tableBody = document.getElementById("apiTable");
     tableBody.innerHTML = "";
     const row = tableBody.insertRow();
-    let currentRow = row.insertCell()
-    currentRow.textContent = "Name";
-    currentRow.onclick = function () { sortTable(0); };
-    row.insertCell().textContent = "Owned";
-    row.insertCell().textContent = "Price";
-    row.insertCell().textContent = "Book";
-    row.insertCell().textContent = "Page";
-    row.insertCell().textContent = "Slot";
+    sortableRow(row.insertCell(), "Name");
+    sortableRow(row.insertCell(), "Owned");
+    sortableRow(row.insertCell(), "Price", true);
+    sortableRow(row.insertCell(), "Book", true);
+    sortableRow(row.insertCell(), "Page", true);
+    sortableRow(row.insertCell(), "Slot", true);
 
     data.forEach((item) => {
         const row = tableBody.insertRow();
-        row.insertCell().textContent = item.Name;
+        cell = row.insertCell()
+        cell.textContent = item.Name;
+        setEventListeners(cell);
         row.insertCell().textContent = item.Owned;
         row.insertCell().textContent = item.Price;
         row.insertCell().textContent = item.Book;
@@ -27,8 +25,85 @@ function displayCocktail(data) {
 
 }
 
+function sortableRow(row, name, isNumeric = false) {
+    row.textContent = name;
+    row.onclick = function () {
+        fetchData(displayCocktail, null, (a, b) => {
+            if (isNumeric) {
+                const numA = parseFloat(a[name].replace('$', ''));
+                const numB = parseFloat(b[name].replace('$', ''));
+                return numA - numB;
+            }
+            return a[name].trim().localeCompare(b[name].trim());
+        });
+    };
+}
+
+let isMouseDown = false;
+
+function setEventListeners(cell) {
+
+    // Handle mouse events
+    cell.addEventListener("mousedown", (e) => {
+        isMouseDown = true;
+        cell.classList.toggle("selected");
+        e.preventDefault();
+    });
+
+    cell.addEventListener("mouseenter", () => {
+        if (isMouseDown) {
+            cell.classList.toggle("selected");
+        }
+    });
+
+    cell.addEventListener("mouseup", () => {
+        isMouseDown = false;
+    });
+
+    // Touch Events (mobile)
+    cell.addEventListener("touchstart", (e) => {
+        isSelecting = true;
+        const touch = e.touches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        toggleSelect(target);
+    });
+
+    cell.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        toggleSelect(target);
+    });
+
+    cell.addEventListener("touchend", () => {
+        isSelecting = false;
+    });
+
+}
+
+function copySelectedText() {
+    const selectedCells = document.querySelectorAll(".selected");
+    const text = Array.from(selectedCells)
+        .map(cell => cell.textContent)
+        .join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Copied: " + text);
+    }).catch(err => {
+        console.error("Failed to copy: ", err);
+    });
+}
+
+let lastFilterFunction = null;
+let lastSortFunction = null;
 
 function fetchData(resultFunction, filterFunction = null, sortFunction = null) {
+    // Update the stored filter/sort if new ones are provided
+    if (filterFunction !== null) lastFilterFunction = filterFunction;
+    if (sortFunction !== null) lastSortFunction = sortFunction;
+
+    const effectiveFilter = filterFunction !== null ? filterFunction : lastFilterFunction;
+    const effectiveSort = sortFunction !== null ? sortFunction : lastSortFunction;
+
     fetch("https://raw.githubusercontent.com/Verbatiama/LegendaryCreatureCollectionStorage/main/collection.json")
         .then((response) => {
             if (response.ok) {
@@ -38,11 +113,11 @@ function fetchData(resultFunction, filterFunction = null, sortFunction = null) {
             }
         })
         .then((data) => {
-            if (filterFunction) {
-                data = data.filter(filterFunction);
+            if (effectiveFilter) {
+                data = data.filter(effectiveFilter);
             }
-            if (sortFunction) {
-                data = data.sort(sortFunction);
+            if (effectiveSort) {
+                data = data.sort(effectiveSort);
             }
 
             resultFunction(data); // Call the function to display the data
@@ -51,63 +126,18 @@ function fetchData(resultFunction, filterFunction = null, sortFunction = null) {
 
 }
 
-function sortTable(n) {
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById("apiTable");
-    console.log(table);
-    switching = true;
-    // Set the sorting direction to ascending:
-    dir = "asc";
-    /* Make a loop that will continue until
-    no switching has been done: */
-    while (switching) {
-        // Start by saying: no switching is done:
-        switching = false;
-        rows = table.rows;
-        /* Loop through all table rows (except the
-        first, which contains table headers): */
-        for (i = 1; i < (rows.length - 1); i++) {
-            // Start by saying there should be no switching:
-            shouldSwitch = false;
-            /* Get the two elements you want to compare,
-            one from current row and one from the next: */
-            x = rows[i].getElementsByTagName("TD")[n];
-            y = rows[i + 1].getElementsByTagName("TD")[n];
-            /* Check if the two rows should switch place,
-            based on the direction, asc or desc: */
-            if (dir == "asc") {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    // If so, mark as a switch and break the loop:
-                    shouldSwitch = true;
-                    break;
-                }
-            } else if (dir == "desc") {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                    // If so, mark as a switch and break the loop:
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-        }
-        if (shouldSwitch) {
-            /* If a switch has been marked, make the switch
-            and mark that a switch has been done: */
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-            // Each time a switch is done, increase this count by 1:
-            switchcount++;
-        } else {
-            /* If no switching has been done AND the direction is "asc",
-            set the direction to "desc" and run the while loop again. */
-            if (switchcount == 0 && dir == "asc") {
-                dir = "desc";
-                switching = true;
-            }
-        }
-    }
-}
-
 fetchData(displayCocktail)
+
+document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+        e.preventDefault(); // Prevent default browser behavior
+        copySelectedText();
+    }
+});
+
+document.addEventListener("touchend", () => {
+    isSelecting = false;
+});
 
 document.addEventListener("DOMContentLoaded", fetchData(function (data) {
     Highcharts.chart('pie-chart-container1', {

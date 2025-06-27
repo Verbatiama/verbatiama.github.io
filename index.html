@@ -13,7 +13,7 @@
             <div>
                 <p><span id="currentCards"></span></p>
             </div>
-            <button onclick="fetchData(displayCocktail)">Full</button>
+            <button onclick="fetchData(displayCocktail,(data) => true)">Full</button>
             <button onclick="fetchData(displayCocktail,(data) => data.Owned == '0')">Not Owned</button>
             <table id="apiTable" class="styled-table">
                 <!-- The table content will be dynamically generated -->

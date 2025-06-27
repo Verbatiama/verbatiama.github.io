@@ -57,3 +57,7 @@
     padding: 20px;
     text-align: center;
 }
+
+.selected {
+    background-color: #66ccff;
+}
