@@ -40,8 +40,8 @@ function sortableRow(row, name, isNumeric = false) {
         }
         fetchData(displayCocktail, null, (a, b) => {
             if (isNumeric) {
-                const numA = parseFloat(a[name].replace('$', ''));
-                const numB = parseFloat(b[name].replace('$', ''));
+                const numA = parseFloat(a[name].toString().replace('$', ''));
+                const numB = parseFloat(b[name].toString().replace('$', ''));
                 return (numA - numB) * lastSortDirection;
             }
             return a[name].trim().localeCompare(b[name].trim()) * lastSortDirection;
