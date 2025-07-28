@@ -129,7 +129,6 @@ function fetchData(resultFunction, filterFunction = null, sortFunction = null) {
             if (effectiveSort) {
                 data = data.sort(effectiveSort);
             }
-
             resultFunction(data); // Call the function to display the data
         })
         .catch((error) => console.error("FETCH ERROR:", error));
@@ -206,8 +205,8 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
             name: 'Share',
             colorByPoint: true,
             data: [
-                { name: 'Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#D2042D' },
-                { name: 'Unowned', y: data.filter(item => item.Owned == 0).map(item => Number(item.Price.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: ' #4169E1' }
+                { name: 'Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price?.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#D2042D' },
+                { name: 'Unowned', y: data.filter(item => item.Owned == '0').map(item => Number(item.Price?.replace("$", "").replace(",", ""))).reduce((sum, price) => sum + price, 0), color: ' #4169E1' }
             ]
         }]
     });
