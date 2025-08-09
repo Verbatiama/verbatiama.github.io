@@ -29,5 +29,5 @@ Project order
 11. ~~Visualise folder~~
     - ~~Lookup card images~~
     - ~~Arrange into grid, navigate via book and page~~
-    - ~~Click on the image to set owned~~
+    - Click on the image to set owned
     - ~~Grey out unowned~~
