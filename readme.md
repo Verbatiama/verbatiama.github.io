@@ -26,8 +26,8 @@ Project order
 8. Convert PowerShell script to an Azure funtion
 9. Create an Azure function to update owned cards
 10. Allow updates via Javascript on page
-11. Visualise folder
-    - Lookup card images
-    - Arrange into grid, navigate via book and page
-    - Click on the image to set owned
-    - Grey out unowned
+11. ~~Visualise folder~~
+    - ~~Lookup card images~~
+    - ~~Arrange into grid, navigate via book and page~~
+    - ~~Click on the image to set owned~~
+    - ~~Grey out unowned~~
