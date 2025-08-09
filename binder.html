@@ -18,12 +18,13 @@
         document.getElementById('right-page-number').textContent = rightPage;
     }
 
-    function fillCardImage(page, position, imageUrl) {
+    function fillCardImage(page, position, imageUrl, owned) {
         const pageId = page === "left" ? "left-page" : "right-page";
         const pageElement = document.getElementById(pageId);
         const cardSlots = pageElement.getElementsByClassName("card-slot");
         if (position < 0 || position >= cardSlots.length) return;
-        cardSlots[position].innerHTML = `<img src="${imageUrl}" alt="Card" style="width:100px;height:150px;border-radius:6px;">`;
+        const filterStyle = owned === 0 ? 'filter: grayscale(100%) brightness(0.6);' : '';
+        cardSlots[position].innerHTML = `<img src="${imageUrl}" alt="Card" style="width:100px;height:150px;border-radius:6px;${filterStyle}">`;
     }
 
     function fillCurrentPages(mergedCards) {
@@ -32,19 +33,20 @@
         const rightCards = mergedCards.filter(card => card.Page == rightPage);
 
         // Prepare arrays for slots (9 per page)
-        const leftImages = Array(9).fill("");
+        const leftImages = Array(9).fill(null);
         leftCards.forEach(card => {
             if (card.image_uris && card.image_uris.large) {
-                leftImages[card.Slot - 1] = card.image_uris.large;
+                leftImages[card.Slot - 1] = { url: card.image_uris.large, owned: card.Owned };
             }
         });
 
-        const rightImages = Array(9).fill("");
+        const rightImages = Array(9).fill(null);
         rightCards.forEach(card => {
             if (card.image_uris && card.image_uris.large) {
-                rightImages[card.Slot - 1] = card.image_uris.large;
+                rightImages[card.Slot - 1] = { url: card.image_uris.large, owned: card.Owned };
             }
         });
+
         // If left page is blank, fill with placeholders
         if (leftPage == 0) {
             for (let i = 0; i < 9; i++) {
@@ -56,7 +58,7 @@
             // Fill left page
             for (let i = 0; i < leftImages.length; i++) {
                 if (leftImages[i]) {
-                    fillCardImage("left", i, leftImages[i]);
+                    fillCardImage("left", i, leftImages[i].url, leftImages[i].owned);
                 } else {
                     document.getElementById("left-page").getElementsByClassName("card-slot")[i].innerHTML =
                         '<div class="card-placeholder">Error</div>';
@@ -66,7 +68,7 @@
         // Fill right page
         for (let i = 0; i < rightImages.length; i++) {
             if (rightImages[i]) {
-                fillCardImage("right", i, rightImages[i]);
+                fillCardImage("right", i, rightImages[i].url, rightImages[i].owned);
             } else {
                 document.getElementById("right-page").getElementsByClassName("card-slot")[i].innerHTML =
                     '<div class="card-placeholder">Error</div>';
