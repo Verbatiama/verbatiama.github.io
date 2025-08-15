@@ -85,7 +85,8 @@ body {
 }
 
 .jump-to-page {
-    margin: 16px 0;
+    display: flex;
+    align-items: center;
 }
 
 .jump-to-page label {
