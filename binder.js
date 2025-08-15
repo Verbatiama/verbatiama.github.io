@@ -52,7 +52,12 @@ function fillCardImage(page, position, imageUrl, owned) {
     const cardSlots = pageElement.getElementsByClassName("card-slot");
     if (position < 0 || position >= cardSlots.length) return;
     const filterStyle = owned === 0 ? 'filter: grayscale(100%) brightness(0.6);' : '';
-    cardSlots[position].innerHTML = `<img src="${imageUrl}" alt="Card" style="width: 100%;height: 100%;${filterStyle}">`;
+    cardSlots[position].innerHTML = `<img src="${imageUrl}" alt="Card" style="width: 100%;height: 100%;${filterStyle};cursor:pointer;">`;
+    // Add click handler for preview
+    const img = cardSlots[position].querySelector('img');
+    if (img) {
+        img.onclick = () => showCardOverlay(imageUrl);
+    }
 }
 
 function retrieveCardImage(card) {
@@ -138,4 +143,19 @@ function jumpToPage() {
     fetchAndMergeCollections().then(data => {
         fillCurrentPages(data);
     });
+}
+
+// Overlay logic
+function showCardOverlay(imageUrl) {
+    const overlay = document.getElementById('card-overlay');
+    const overlayImg = document.getElementById('card-overlay-img');
+    overlayImg.src = imageUrl;
+    overlay.style.display = 'flex';
+    overlay.onclick = hideCardOverlay;
+}
+
+function hideCardOverlay() {
+    const overlay = document.getElementById('card-overlay');
+    overlay.style.display = 'none';
+    document.getElementById('card-overlay-img').src = '';
 }
