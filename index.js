@@ -151,7 +151,8 @@ document.addEventListener("touchend", () => {
 document.addEventListener("DOMContentLoaded", fetchData(function (data) {
     Highcharts.chart('pie-chart-container1', {
         chart: {
-            type: 'pie'
+            type: 'pie',
+            styledMode: true
         },
         title: {
             text: 'Collection Quantity'
@@ -173,8 +174,8 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
             name: 'Share',
             colorByPoint: true,
             data: [
-                { name: 'Owned', y: data.reduce((sum, item) => sum + item.Owned, 0), color: '#DA70D6' },
-                { name: 'Unowned', y: data.length - data.reduce((sum, item) => sum + item.Owned, 0), color: '#FF6F61' }
+                { name: 'Owned', y: data.reduce((sum, item) => sum + item.Owned, 0) },
+                { name: 'Unowned', y: data.length - data.reduce((sum, item) => sum + item.Owned, 0) }
             ]
         }]
     });
@@ -183,7 +184,8 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
 document.addEventListener("DOMContentLoaded", fetchData(function (data) {
     Highcharts.chart('pie-chart-container2', {
         chart: {
-            type: 'pie'
+            type: 'pie',
+            styledMode: true
         },
         title: {
             text: 'Collection value (USD)'
@@ -205,8 +207,8 @@ document.addEventListener("DOMContentLoaded", fetchData(function (data) {
             name: 'Share',
             colorByPoint: true,
             data: [
-                { name: 'Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price?.replace("$", ""))).reduce((sum, price) => sum + price, 0), color: '#D2042D' },
-                { name: 'Unowned', y: data.filter(item => item.Owned == '0').map(item => Number(item.Price?.replace("$", "").replace(",", ""))).reduce((sum, price) => sum + price, 0), color: ' #4169E1' }
+                { name: 'Owned', y: data.filter(item => item.Owned == 1).map(item => Number(item.Price?.replace("$", ""))).reduce((sum, price) => sum + price, 0) },
+                { name: 'Unowned', y: data.filter(item => item.Owned == '0').map(item => Number(item.Price?.replace("$", "").replace(",", ""))).reduce((sum, price) => sum + price, 0) }
             ]
         }]
     });
