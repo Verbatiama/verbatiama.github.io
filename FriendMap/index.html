@@ -1,161 +1,41 @@
-// deck.gl
-// SPDX-License-Identifier: MIT
-// Copyright (c) vis.gl contributors
-
-/* global document */
-import {GoogleMapsOverlay as DeckOverlay} from '@deck.gl/google-maps';
-import {GeoJsonLayer, ArcLayer} from '@deck.gl/layers';
-import {Loader} from '@googlemaps/js-api-loader';
-import {HeatmapLayer} from '@deck.gl/aggregation-layers';
-
-// Set your Google Maps API key here or via environment variable
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE'; // eslint-disable-line
-const GOOGLE_MAP_ID = '12daf469cfd19e9d34767371'; // eslint-disable-line
-
-const loader = new Loader({apiKey: GOOGLE_MAPS_API_KEY});
-
-// Cookie utility functions
-function setCookie(name, value, days = 365) {
-  const date = new Date();
-  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-  const expires = `expires=${date.toUTCString()}`;
-  document.cookie = `${name}=${encodeURIComponent(JSON.stringify(value))};${expires};path=/`;
-}
-
-function getCookie(name) {
-  const nameEQ = name + '=';
-  const cookies = document.cookie.split(';');
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.indexOf(nameEQ) === 0) {
-      try {
-        return JSON.parse(decodeURIComponent(cookie.substring(nameEQ.length)));
-      } catch (e) {
-        return null;
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>deck.gl w/ Google Maps example</title>
+    <style>
+      #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
       }
-    }
-  }
-  return null;
-}
-
-// URL encoding/decoding functions
-function setLocationUrl(locationsData) {
-  const encoded = encodeURIComponent(JSON.stringify(locationsData));
-  window.history.replaceState({}, '', `?locations=${encoded}`);
-}
-
-function getLocationFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const encoded = params.get('locations');
-  console.log(encoded);
-  if (encoded && encoded.length > 0) {
-    try {
-      return JSON.parse(decodeURIComponent(encoded));
-    } catch (e) {
-      return null;
-    }
-  }
-  return null;
-}
-
-export function loadMap(locationsData) {
-  loader.importLibrary('maps').then(googlemaps => {
-    const map = new googlemaps.Map(document.getElementById('map'), {
-      center: {lat: -34.92572531133676, lng: 138.59971024043261},
-      zoom: 16,
-      mapId: GOOGLE_MAP_ID
-    });
-
-    const overlay = new DeckOverlay({
-      layers: [
-        new HeatmapLayer({
-          id: 'HeatmapLayer',
-          data: locationsData,
-          opacity: 0.2,
-          aggregation: 'SUM',
-          getPosition: d => d.COORDINATES,
-          // reduce the weight to decrease initial intensity
-          getWeight: d => d.SPACES * 0.5,
-          // increase the pixel radius so points have a wider effect
-          radiusPixels: 1000,
-          // overall intensity factor can also be lowered
-          intensity: 0.8
-        })
-      ]
-    });
-
-    setCookie('peopleLocations', locationsData);
-    overlay.setMap(map);
-  });
-}
-
-function getEnabledPeople() {
-  const buttons = document.querySelectorAll('#people button');
-  const enabledPeople = [];
-  buttons.forEach((button, index) => {
-    if (button.style.color === 'blue') {
-      enabledPeople.push({
-        COORDINATES: [
-          Number(button.getAttribute('data-long')),
-          Number(button.getAttribute('data-lat'))
-        ],
-        Name: button.name,
-        SPACES: 1
-      });
-    }
-  });
-  return enabledPeople;
-}
-
-function renderLocationControls(peopleData) {
-  const container = document.getElementById('people');
-  peopleData.forEach((person, index) => {
-    const button = document.createElement('button');
-    button.textContent = person.Name || `Person ${index + 1}`;
-    button.style.color = 'blue';
-    button.setAttribute('data-long', person.COORDINATES[0]);
-    button.setAttribute('data-lat', person.COORDINATES[1]);
-    button.name = person.Name;
-    button.addEventListener('click', () => {
-      if (button.style.color === 'red') {
-        button.style.color = 'blue';
-      } else {
-        button.style.color = 'red';
+      #menu {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 45%;
       }
-      const enabledPeople = getEnabledPeople();
-      loadMap(enabledPeople);
-      setCookie('peopleLocations', enabledPeople);
-    });
-    container.appendChild(button);
-  });
-}
-
-function addLocation() {
-  const nameInput = document.getElementById('name');
-  const latInput = document.getElementById('lat');
-  const longInput = document.getElementById('lng');
-  renderLocationControls([
-    {
-      Name: nameInput.value,
-      COORDINATES: [Number(longInput.value), Number(latInput.value)],
-      SPACES: 1
-    }
-  ]);
-  const enabledPeople = getEnabledPeople();
-  loadMap(enabledPeople);
-}
-
-// Initialize with URL data, then cookie, then defaults
-let peopleLocations = getLocationFromUrl() ?? getCookie('peopleLocations');
-setCookie('peopleLocations', peopleLocations);
-setLocationUrl(peopleLocations);
-
-document.getElementById('reload').addEventListener('click', loadMap);
-document.getElementById('submit').addEventListener('click', addLocation);
-
-document.addEventListener('readystatechange', event => {
-  if (event.target.readyState === 'complete') {
-    renderLocationControls(peopleLocations);
-    loadMap(peopleLocations);
-  }
-});
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script type="module" src="app.js"></script>
+    <div id="menu">
+      <div id="people"></div>
+      <div id="controls">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" /><br /><br />
+        <label for="lat">Latitude:</label>
+        <input type="text" id="lat" name="lat" /><br /><br />
+        <label for="lng">Longitude:</label>
+        <input type="text" id="lng" name="lng" /><br /><br />
+        <button id="submit">Submit</button>
+        <button id="reload">Reload</button>
+        <br />
+      </div>
+    </div>
+  </body>
+</html>
