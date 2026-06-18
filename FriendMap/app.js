@@ -12,7 +12,11 @@ import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 const GOOGLE_MAPS_API_KEY = "AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE"; // eslint-disable-line
 const GOOGLE_MAP_ID = "12daf469cfd19e9d34767371"; // eslint-disable-line
 
-setOptions({ key: GOOGLE_MAPS_API_KEY });
+setOptions({
+  key: GOOGLE_MAPS_API_KEY,
+  mapIds: [GOOGLE_MAP_ID],
+  authReferrerPolicy: "origin",
+});
 
 // Cookie utility functions
 function setCookie(name, value, days = 365) {
@@ -47,7 +51,6 @@ function setLocationUrl(locationsData) {
 function getLocationFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const encoded = params.get("locations");
-  console.log(encoded);
   if (encoded && encoded.length > 0) {
     try {
       return JSON.parse(decodeURIComponent(encoded));
@@ -71,6 +74,12 @@ export function loadMap(locationsData) {
     const peopleCenterPointY =
       locationsData.reduce((sum, loc) => sum + loc.COORDINATES[1], 0) /
       locationsData.length;
+    const centerPoint = [
+      {
+        COORDINATES: [peopleCenterPointX, peopleCenterPointY],
+      },
+    ];
+
     const overlay = new DeckOverlay({
       layers: [
         new HeatmapLayer({
@@ -88,10 +97,11 @@ export function loadMap(locationsData) {
         }),
         new IconLayer({
           id: "IconLayer",
-          getColor: [0, 128, 0],
-          getIcon: "marker",
-          getPosition: [peopleCenterPointX, peopleCenterPointY],
-          getSize: 40,
+          data: centerPoint,
+          getColor: () => [37, 99, 235],
+          getIcon: () => "marker",
+          getPosition: (d) => d.COORDINATES,
+          getSize: () => 48,
           iconAtlas:
             "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
           iconMapping:
@@ -169,7 +179,9 @@ let peopleLocations = getLocationFromUrl() ?? getCookie("peopleLocations");
 setCookie("peopleLocations", peopleLocations);
 setLocationUrl(peopleLocations);
 
-document.getElementById("reload").addEventListener("click", loadMap);
+document.getElementById("reload").addEventListener("click", () => {
+  loadMap(getEnabledPeople());
+});
 document.getElementById("submit").addEventListener("click", addLocation);
 
 document.addEventListener("readystatechange", (event) => {

@@ -22935,7 +22935,11 @@ dw.layerName = "HeatmapLayer", dw.defaultProps = cw;
 //#endregion
 //#region FriendMap/app.js
 var fw = "AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE", pw = "12daf469cfd19e9d34767371";
-NC({ key: fw });
+NC({
+	key: fw,
+	mapIds: [pw],
+	authReferrerPolicy: "origin"
+});
 function mw(e, t, n = 365) {
 	let r = /* @__PURE__ */ new Date();
 	r.setTime(r.getTime() + n * 24 * 60 * 60 * 1e3);
@@ -22957,7 +22961,7 @@ function gw(e) {
 }
 function _w() {
 	let e = new URLSearchParams(window.location.search).get("locations");
-	if (console.log(e), e && e.length > 0) try {
+	if (e && e.length > 0) try {
 		return JSON.parse(decodeURIComponent(e));
 	} catch {
 		return null;
@@ -22973,7 +22977,7 @@ function vw(e) {
 			},
 			zoom: 16,
 			mapId: pw
-		}), r = e.reduce((e, t) => e + t.COORDINATES[0], 0) / e.length, i = e.reduce((e, t) => e + t.COORDINATES[1], 0) / e.length, a = new eC({ layers: [new dw({
+		}), r = [{ COORDINATES: [e.reduce((e, t) => e + t.COORDINATES[0], 0) / e.length, e.reduce((e, t) => e + t.COORDINATES[1], 0) / e.length] }], i = new eC({ layers: [new dw({
 			id: "HeatmapLayer",
 			data: e,
 			opacity: .2,
@@ -22984,19 +22988,20 @@ function vw(e) {
 			intensity: .75
 		}), new SC({
 			id: "IconLayer",
-			getColor: [
-				0,
-				128,
-				0
+			data: r,
+			getColor: () => [
+				37,
+				99,
+				235
 			],
-			getIcon: "marker",
-			getPosition: [r, i],
-			getSize: 40,
+			getIcon: () => "marker",
+			getPosition: (e) => e.COORDINATES,
+			getSize: () => 48,
 			iconAtlas: "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
 			iconMapping: "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
 			pickable: !0
 		})] });
-		mw("peopleLocations", e), gw(e), a.setMap(n);
+		mw("peopleLocations", e), gw(e), i.setMap(n);
 	});
 }
 function yw() {
@@ -23011,7 +23016,7 @@ function yw() {
 }
 function bw(e) {
 	let t = document.getElementById("people");
-	e.forEach((e, n) => {
+	e?.forEach((e, n) => {
 		let r = document.createElement("button");
 		r.textContent = e.Name || `Person ${n + 1}`, r.style.color = "blue", r.setAttribute("data-long", e.COORDINATES[0]), r.setAttribute("data-lat", e.COORDINATES[1]), r.name = e.Name, r.addEventListener("click", () => {
 			r.style.color === "red" ? r.style.color = "blue" : r.style.color = "red";
@@ -23029,7 +23034,9 @@ function xw() {
 	}]), vw(yw());
 }
 var Sw = _w() ?? hw("peopleLocations");
-mw("peopleLocations", Sw), gw(Sw), document.getElementById("reload").addEventListener("click", vw), document.getElementById("submit").addEventListener("click", xw), document.addEventListener("readystatechange", (e) => {
+mw("peopleLocations", Sw), gw(Sw), document.getElementById("reload").addEventListener("click", () => {
+	vw(yw());
+}), document.getElementById("submit").addEventListener("click", xw), document.addEventListener("readystatechange", (e) => {
 	e.target.readyState === "complete" && (bw(Sw), vw(Sw));
 });
 //#endregion
