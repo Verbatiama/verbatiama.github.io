@@ -3,16 +3,16 @@
 // Copyright (c) vis.gl contributors
 
 /* global document */
-import {GoogleMapsOverlay as DeckOverlay} from '@deck.gl/google-maps';
-import {GeoJsonLayer, ArcLayer} from '@deck.gl/layers';
-import {Loader} from '@googlemaps/js-api-loader';
-import {HeatmapLayer} from '@deck.gl/aggregation-layers';
+import { GoogleMapsOverlay as DeckOverlay } from "@deck.gl/google-maps";
+import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers";
+import { Loader } from "@googlemaps/js-api-loader";
+import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
 // Set your Google Maps API key here or via environment variable
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE'; // eslint-disable-line
-const GOOGLE_MAP_ID = '12daf469cfd19e9d34767371'; // eslint-disable-line
+const GOOGLE_MAPS_API_KEY = "AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE"; // eslint-disable-line
+const GOOGLE_MAP_ID = "12daf469cfd19e9d34767371"; // eslint-disable-line
 
-const loader = new Loader({apiKey: GOOGLE_MAPS_API_KEY});
+const loader = new Loader({ apiKey: GOOGLE_MAPS_API_KEY });
 
 // Cookie utility functions
 function setCookie(name, value, days = 365) {
@@ -23,8 +23,8 @@ function setCookie(name, value, days = 365) {
 }
 
 function getCookie(name) {
-  const nameEQ = name + '=';
-  const cookies = document.cookie.split(';');
+  const nameEQ = name + "=";
+  const cookies = document.cookie.split(";");
   for (let cookie of cookies) {
     cookie = cookie.trim();
     if (cookie.indexOf(nameEQ) === 0) {
@@ -41,12 +41,12 @@ function getCookie(name) {
 // URL encoding/decoding functions
 function setLocationUrl(locationsData) {
   const encoded = encodeURIComponent(JSON.stringify(locationsData));
-  window.history.replaceState({}, '', `?locations=${encoded}`);
+  window.history.replaceState({}, "", `?locations=${encoded}`);
 }
 
 function getLocationFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  const encoded = params.get('locations');
+  const encoded = params.get("locations");
   console.log(encoded);
   if (encoded && encoded.length > 0) {
     try {
@@ -59,49 +59,62 @@ function getLocationFromUrl() {
 }
 
 export function loadMap(locationsData) {
-  loader.importLibrary('maps').then(googlemaps => {
-    const map = new googlemaps.Map(document.getElementById('map'), {
-      center: {lat: -34.92572531133676, lng: 138.59971024043261},
+  loader.importLibrary("maps").then((googlemaps) => {
+    const map = new googlemaps.Map(document.getElementById("map"), {
+      center: { lat: -34.92572531133676, lng: 138.59971024043261 },
       zoom: 16,
-      mapId: GOOGLE_MAP_ID
+      mapId: GOOGLE_MAP_ID,
     });
-
+    peopleCenterPointX = locationsData.reduce((sum, loc) => sum + loc.COORDINATES[0], 0) / locationsData.length;
+    peopleCenterPointY = locationsData.reduce((sum, loc) => sum + loc.COORDINATES[1], 0) / locationsData.length;
     const overlay = new DeckOverlay({
       layers: [
         new HeatmapLayer({
-          id: 'HeatmapLayer',
+          id: "HeatmapLayer",
           data: locationsData,
           opacity: 0.2,
-          aggregation: 'SUM',
-          getPosition: d => d.COORDINATES,
+          aggregation: "SUM",
+          getPosition: (d) => d.COORDINATES,
           // reduce the weight to decrease initial intensity
-          getWeight: d => d.SPACES * 0.5,
+          getWeight: (d) => d.SPACES * 0.5,
           // increase the pixel radius so points have a wider effect
           radiusPixels: 1000,
           // overall intensity factor can also be lowered
-          intensity: 0.75
-        })
-      ]
+          intensity: 0.75,
+        }),
+        new IconLayer({
+          id: "IconLayer",
+          getColor: (d) => [Math.sqrt(3616), 140, 0],
+          getIcon: "marker",
+          getPosition: [peopleCenterPointX, peopleCenterPointY],
+          getSize: 40,
+          iconAtlas:
+            "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+          iconMapping:
+            "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
+          pickable: true,
+        }),
+      ],
     });
 
-    setCookie('peopleLocations', locationsData);
+    setCookie("peopleLocations", locationsData);
     setLocationUrl(locationsData);
     overlay.setMap(map);
   });
 }
 
 function getEnabledPeople() {
-  const buttons = document.querySelectorAll('#people button');
+  const buttons = document.querySelectorAll("#people button");
   const enabledPeople = [];
   buttons.forEach((button, index) => {
-    if (button.style.color === 'blue') {
+    if (button.style.color === "blue") {
       enabledPeople.push({
         COORDINATES: [
-          Number(button.getAttribute('data-long')),
-          Number(button.getAttribute('data-lat'))
+          Number(button.getAttribute("data-long")),
+          Number(button.getAttribute("data-lat")),
         ],
         Name: button.name,
-        SPACES: 1
+        SPACES: 1,
       });
     }
   });
@@ -109,53 +122,53 @@ function getEnabledPeople() {
 }
 
 function renderLocationControls(peopleData) {
-  const container = document.getElementById('people');
+  const container = document.getElementById("people");
   peopleData.forEach((person, index) => {
-    const button = document.createElement('button');
+    const button = document.createElement("button");
     button.textContent = person.Name || `Person ${index + 1}`;
-    button.style.color = 'blue';
-    button.setAttribute('data-long', person.COORDINATES[0]);
-    button.setAttribute('data-lat', person.COORDINATES[1]);
+    button.style.color = "blue";
+    button.setAttribute("data-long", person.COORDINATES[0]);
+    button.setAttribute("data-lat", person.COORDINATES[1]);
     button.name = person.Name;
-    button.addEventListener('click', () => {
-      if (button.style.color === 'red') {
-        button.style.color = 'blue';
+    button.addEventListener("click", () => {
+      if (button.style.color === "red") {
+        button.style.color = "blue";
       } else {
-        button.style.color = 'red';
+        button.style.color = "red";
       }
       const enabledPeople = getEnabledPeople();
       loadMap(enabledPeople);
-      setCookie('peopleLocations', enabledPeople);
+      setCookie("peopleLocations", enabledPeople);
     });
     container.appendChild(button);
   });
 }
 
 function addLocation() {
-  const nameInput = document.getElementById('name');
-  const latInput = document.getElementById('lat');
-  const longInput = document.getElementById('lng');
+  const nameInput = document.getElementById("name");
+  const latInput = document.getElementById("lat");
+  const longInput = document.getElementById("lng");
   renderLocationControls([
     {
       Name: nameInput.value,
       COORDINATES: [Number(longInput.value), Number(latInput.value)],
-      SPACES: 1
-    }
+      SPACES: 1,
+    },
   ]);
   const enabledPeople = getEnabledPeople();
   loadMap(enabledPeople);
 }
 
 // Initialize with URL data, then cookie, then defaults
-let peopleLocations = getLocationFromUrl() ?? getCookie('peopleLocations');
-setCookie('peopleLocations', peopleLocations);
+let peopleLocations = getLocationFromUrl() ?? getCookie("peopleLocations");
+setCookie("peopleLocations", peopleLocations);
 setLocationUrl(peopleLocations);
 
-document.getElementById('reload').addEventListener('click', loadMap);
-document.getElementById('submit').addEventListener('click', addLocation);
+document.getElementById("reload").addEventListener("click", loadMap);
+document.getElementById("submit").addEventListener("click", addLocation);
 
-document.addEventListener('readystatechange', event => {
-  if (event.target.readyState === 'complete') {
+document.addEventListener("readystatechange", (event) => {
+  if (event.target.readyState === "complete") {
     renderLocationControls(peopleLocations);
     loadMap(peopleLocations);
   }
