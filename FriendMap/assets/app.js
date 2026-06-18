@@ -23033,11 +23033,17 @@ function xw() {
 		SPACES: 1
 	}]), vw(yw());
 }
-var Sw = _w() ?? hw("peopleLocations");
-mw("peopleLocations", Sw), gw(Sw), document.getElementById("reload").addEventListener("click", () => {
+function Sw(e) {
+	let t = document.getElementById("menu"), n = document.getElementById("menu-toggle");
+	t.classList.toggle("is-minimised", e), n.setAttribute("aria-expanded", String(!e)), n.setAttribute("aria-label", e ? "Expand controls" : "Minimise controls"), n.title = e ? "Expand controls" : "Minimise controls", localStorage.setItem("friendMapControlsMinimised", String(e));
+}
+var Cw = _w() ?? hw("peopleLocations");
+mw("peopleLocations", Cw), gw(Cw), document.getElementById("menu-toggle").addEventListener("click", () => {
+	Sw(!document.getElementById("menu").classList.contains("is-minimised"));
+}), document.getElementById("reload").addEventListener("click", () => {
 	vw(yw());
 }), document.getElementById("submit").addEventListener("click", xw), document.addEventListener("readystatechange", (e) => {
-	e.target.readyState === "complete" && (bw(Sw), vw(Sw));
+	e.target.readyState === "complete" && (Sw(localStorage.getItem("friendMapControlsMinimised") === "true"), bw(Cw), vw(Cw));
 });
 //#endregion
 export { vw as loadMap };

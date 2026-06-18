@@ -174,11 +174,28 @@ function addLocation() {
   loadMap(enabledPeople);
 }
 
+function setControlsMinimised(isMinimised) {
+  const menu = document.getElementById("menu");
+  const toggle = document.getElementById("menu-toggle");
+  menu.classList.toggle("is-minimised", isMinimised);
+  toggle.setAttribute("aria-expanded", String(!isMinimised));
+  toggle.setAttribute(
+    "aria-label",
+    isMinimised ? "Expand controls" : "Minimise controls",
+  );
+  toggle.title = isMinimised ? "Expand controls" : "Minimise controls";
+  localStorage.setItem("friendMapControlsMinimised", String(isMinimised));
+}
+
 // Initialize with URL data, then cookie, then defaults
 let peopleLocations = getLocationFromUrl() ?? getCookie("peopleLocations");
 setCookie("peopleLocations", peopleLocations);
 setLocationUrl(peopleLocations);
 
+document.getElementById("menu-toggle").addEventListener("click", () => {
+  const menu = document.getElementById("menu");
+  setControlsMinimised(!menu.classList.contains("is-minimised"));
+});
 document.getElementById("reload").addEventListener("click", () => {
   loadMap(getEnabledPeople());
 });
@@ -186,6 +203,7 @@ document.getElementById("submit").addEventListener("click", addLocation);
 
 document.addEventListener("readystatechange", (event) => {
   if (event.target.readyState === "complete") {
+    setControlsMinimised(localStorage.getItem("friendMapControlsMinimised") === "true");
     renderLocationControls(peopleLocations);
     loadMap(peopleLocations);
   }
