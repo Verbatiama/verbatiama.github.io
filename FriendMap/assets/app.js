@@ -11081,7 +11081,7 @@ function Jp(e = {}, t) {
 }
 //#endregion
 //#region node_modules/@deck.gl/core/dist/shaderlib/misc/layer-uniforms.js
-var Yp = "struct LayerUniforms {\n  opacity: f32,\n};\n\n@group(0) @binding(auto)\nvar<uniform> layer: LayerUniforms;\n", Xp = "layout(std140) uniform layerUniforms {\n  uniform float opacity;\n} layer;\n", Zp = {
+var Yp = "struct LayerUniforms {\n  opacity: f32,\n};\n\n@group(0) @binding(auto)\nvar<uniform> layer: LayerUniforms;\n", Xp = "layout(std140) uniform layerUniforms {\n  float opacity;\n} layer;\n", Zp = {
 	name: "layer",
 	source: Yp,
 	vs: Xp,
