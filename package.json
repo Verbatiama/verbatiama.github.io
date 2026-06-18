@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "build:friendmap": "vite build --config vite.config.js"
+  },
+  "dependencies": {
+    "@deck.gl/aggregation-layers": "^9.3.4",
+    "@deck.gl/google-maps": "^9.3.4",
+    "@deck.gl/layers": "^9.3.4",
+    "@googlemaps/js-api-loader": "^2.1.1",
+    "vite": "^8.0.16"
+  }
+}
