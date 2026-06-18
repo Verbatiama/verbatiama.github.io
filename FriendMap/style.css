@@ -84,8 +84,7 @@ body {
 }
 
 #menu.is-minimised #people,
-#menu.is-minimised #controls,
-#menu.is-minimised #restaurant-results {
+#menu.is-minimised #controls {
   display: none;
 }
 
@@ -277,16 +276,93 @@ input:focus {
   color: #0f766e;
 }
 
-#restaurant-results {
-  grid-column: 1 / -1;
-  display: none;
-  max-height: 190px;
-  overflow: auto;
-  padding-top: 4px;
+#restaurant-sidebar {
+  position: fixed;
+  top: 24px;
+  bottom: 24px;
+  left: 24px;
+  z-index: 6;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
+  width: min(360px, calc(100% - 48px));
+  padding: 16px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-18px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
 }
 
-#restaurant-results.is-visible {
-  display: block;
+#restaurant-sidebar.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.restaurant-sidebar-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.restaurant-sidebar-eyebrow {
+  color: #0f766e;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+#restaurant-sidebar-title {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+#restaurant-sidebar-close {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  border: 1px solid rgba(102, 112, 133, 0.24);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+#restaurant-sidebar-close::before,
+#restaurant-sidebar-close::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+#restaurant-sidebar-close::before {
+  transform: rotate(45deg);
+}
+
+#restaurant-sidebar-close::after {
+  transform: rotate(-45deg);
+}
+
+#restaurant-results {
+  min-height: 0;
+  overflow: auto;
 }
 
 .restaurant-status {
@@ -342,6 +418,14 @@ input:focus {
     padding: 14px 62px 14px 14px;
   }
 
+  #restaurant-sidebar {
+    top: 14px;
+    bottom: auto;
+    left: 14px;
+    width: calc(100% - 28px);
+    max-height: min(440px, calc(100vh - 150px));
+  }
+
   #menu.is-minimised {
     left: auto;
     right: 90px;
@@ -368,7 +452,11 @@ input:focus {
     grid-template-columns: 1fr;
   }
 
-        #controls button {
-          width: 100%;
-        }
-      }
+  #controls button {
+    width: 100%;
+  }
+
+  #restaurant-sidebar {
+    max-height: min(420px, calc(100vh - 180px));
+  }
+}

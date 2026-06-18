@@ -22934,7 +22934,7 @@ var QC = "#version 300 es\nin vec3 positions;\nin vec3 positions64Low;\nin float
 dw.layerName = "HeatmapLayer", dw.defaultProps = cw;
 //#endregion
 //#region FriendMap/restaurants.js
-var fw = 900, pw = 900, mw = 6, hw = 20, gw = 6371e3, _w = [];
+var fw = 900, pw = 6, mw = 20, hw = 6371e3, gw = 900, _w = [];
 function vw(e) {
 	return Array.isArray(e) ? e.map((e) => ({
 		...e,
@@ -22961,48 +22961,89 @@ function xw(e) {
 }
 function Sw(e, t) {
 	let n = e.lat * Math.PI / 180, r = t.lat * Math.PI / 180, i = (t.lat - e.lat) * Math.PI / 180, a = (t.lng - e.lng) * Math.PI / 180, o = Math.sin(i / 2) ** 2 + Math.cos(n) * Math.cos(r) * Math.sin(a / 2) ** 2;
-	return 2 * gw * Math.atan2(Math.sqrt(o), Math.sqrt(1 - o));
+	return 2 * hw * Math.atan2(Math.sqrt(o), Math.sqrt(1 - o));
 }
-function Cw(e, t) {
-	let n = vw(e), r = [{
-		label: "centerpoint",
-		center: bw(yw(n, t)),
-		priority: n.length + 1
-	}], i = n.map((e) => {
-		let t = bw(e.COORDINATES), r = n.filter((e) => Sw(t, bw(e.COORDINATES)) <= pw).length;
+function Cw(e, t, n) {
+	let r = t / hw * (180 / Math.PI), i = n / (hw * Math.cos(e.lat * Math.PI / 180)) * (180 / Math.PI);
+	return {
+		lat: e.lat + r,
+		lng: e.lng + i
+	};
+}
+function ww(e) {
+	let t = vw(e);
+	if (!t.length) return null;
+	if (t.length === 1) {
+		let e = bw(t[0].COORDINATES), n = Cw(e, -900, -900), r = Cw(e, gw, gw);
 		return {
-			label: e.Name ? `${e.Name}'s red zone` : "friend red zone",
-			center: t,
-			priority: r
+			north: r.lat,
+			south: n.lat,
+			east: r.lng,
+			west: n.lng
 		};
-	}).sort((e, t) => t.priority - e.priority);
-	for (let e of i) {
-		if (r.length >= mw) break;
-		r.some((t) => Sw(t.center, e.center) < fw * .7) || r.push(e);
 	}
-	return r;
+	return t.reduce((e, t) => {
+		let [n, r] = t.COORDINATES;
+		return {
+			north: Math.max(e.north, r),
+			south: Math.min(e.south, r),
+			east: Math.max(e.east, n),
+			west: Math.min(e.west, n)
+		};
+	}, {
+		north: -Infinity,
+		south: Infinity,
+		east: -Infinity,
+		west: Infinity
+	});
 }
-function ww() {
+function Tw(e, t) {
+	return t ? e.lat <= t.north && e.lat >= t.south && e.lng <= t.east && e.lng >= t.west : !0;
+}
+function Ew(e, t) {
+	let n = vw(e), r = bw(yw(n, t)), i = [{
+		label: "centerpoint",
+		center: r,
+		distanceToCenter: 0,
+		sortOrder: 0
+	}], a = n.map((e, t) => {
+		let n = bw(e.COORDINATES);
+		return {
+			label: e.Name ? `${e.Name}'s red zone` : `Person ${t + 1}'s red zone`,
+			center: n,
+			distanceToCenter: Sw(r, n)
+		};
+	}).sort((e, t) => e.distanceToCenter - t.distanceToCenter || e.label.localeCompare(t.label)).map((e, t) => ({
+		...e,
+		sortOrder: t + 1
+	}));
+	for (let e of a) {
+		if (i.length >= pw) break;
+		i.some((t) => t.sortOrder > 0 && Sw(t.center, e.center) < fw * .7) || i.push(e);
+	}
+	return i;
+}
+function Dw() {
 	_w.forEach((e) => {
 		e.map = null;
 	}), _w = [];
 }
-function Tw() {
-	let e = document.getElementById("restaurant-results");
-	e && (e.replaceChildren(), e.classList.remove("is-visible"));
+function Ow() {
+	let e = document.getElementById("restaurant-sidebar"), t = document.getElementById("restaurant-results");
+	t && (t.replaceChildren(), e?.classList.remove("is-visible"), e?.setAttribute("aria-hidden", "true"));
 }
-function Ew(e) {
-	let t = document.getElementById("restaurant-results"), n = document.createElement("div");
-	n.className = "restaurant-status", n.textContent = e, t.replaceChildren(n), t.classList.add("is-visible");
+function kw(e) {
+	let t = document.getElementById("restaurant-sidebar"), n = document.getElementById("restaurant-results"), r = document.createElement("div");
+	r.className = "restaurant-status", r.textContent = e, n.replaceChildren(r), t?.classList.add("is-visible"), t?.setAttribute("aria-hidden", "false");
 }
-function Dw(e, t) {
-	let n = document.getElementById("restaurant-results"), r = document.createElement("div");
-	if (r.className = "restaurant-status", r.textContent = `${e.length} restaurants found near ${t.length} meetup zones`, !e.length) {
-		r.textContent = "No restaurants found near the current meetup zones", n.replaceChildren(r), n.classList.add("is-visible");
+function Aw(e, t) {
+	let n = document.getElementById("restaurant-sidebar"), r = document.getElementById("restaurant-results"), i = document.createElement("div");
+	if (i.className = "restaurant-status", i.textContent = `${e.length} restaurants found inside the people bounds`, !e.length) {
+		i.textContent = "No restaurants found inside the current people bounds", r.replaceChildren(i), n?.classList.add("is-visible"), n?.setAttribute("aria-hidden", "false");
 		return;
 	}
-	let i = document.createElement("ul");
-	i.className = "restaurant-list", e.forEach((e) => {
+	let a = document.createElement("ul");
+	a.className = "restaurant-list", e.forEach((e) => {
 		let t = document.createElement("li");
 		t.className = "restaurant-item";
 		let n = e.url ? document.createElement("a") : document.createElement("span");
@@ -23012,10 +23053,10 @@ function Dw(e, t) {
 			e.address,
 			e.rating,
 			e.closestZone
-		].filter(Boolean).join(" - "), t.append(n, r), i.appendChild(t);
-	}), n.replaceChildren(r, i), n.classList.add("is-visible");
+		].filter(Boolean).join(" - "), t.append(n, r), a.appendChild(t);
+	}), r.replaceChildren(i, a), n?.classList.add("is-visible"), n?.setAttribute("aria-hidden", "false");
 }
-function Ow(e) {
+function jw(e) {
 	let t = document.createElement("div"), n = document.createElement("strong");
 	n.textContent = e.name;
 	let r = document.createElement("div");
@@ -23025,17 +23066,17 @@ function Ow(e) {
 	}
 	return t;
 }
-async function kw({ map: e, locationsData: t, fallbackLocationsData: n, mapCenter: r }) {
+async function Mw({ map: e, locationsData: t, fallbackLocationsData: n, mapCenter: r }) {
 	let i = document.getElementById("find-restaurants");
-	i.disabled = !0, Ew("Finding restaurants near the red zones..."), ww();
+	i.disabled = !0, kw("Finding restaurants near the red zones..."), Dw();
 	try {
-		let i = Cw(t?.length ? t : n, r), [{ Place: a, SearchNearbyRankPreference: o }, { AdvancedMarkerElement: s }, { InfoWindow: c }] = await Promise.all([
+		let i = t?.length ? t : n, a = Ew(i, r), o = ww(i), [{ Place: s, SearchNearbyRankPreference: c }, { AdvancedMarkerElement: l }, { InfoWindow: u }] = await Promise.all([
 			PC("places"),
 			PC("marker"),
 			PC("maps")
-		]), l = /* @__PURE__ */ new Map();
-		for (let e of i) {
-			let { places: t } = await a.searchNearby({
+		]), d = /* @__PURE__ */ new Map();
+		for (let e of a) {
+			let { places: t } = await s.searchNearby({
 				fields: [
 					"id",
 					"displayName",
@@ -23050,63 +23091,64 @@ async function kw({ map: e, locationsData: t, fallbackLocationsData: n, mapCente
 					radius: fw
 				},
 				includedPrimaryTypes: ["restaurant"],
-				maxResultCount: hw,
-				rankPreference: o.POPULARITY
+				maxResultCount: mw,
+				rankPreference: c.POPULARITY
 			});
 			t.forEach((t) => {
 				let n = xw(t.location);
-				if (!n) return;
-				let r = t.id || `${t.displayName}-${n.lat.toFixed(6)}-${n.lng.toFixed(6)}`, i = Sw(e.center, n), a = l.get(r), o = t.rating ? `${t.rating.toFixed(1)} stars${t.userRatingCount ? ` (${t.userRatingCount})` : ""}` : "";
-				(!a || i < a.distanceToZone) && l.set(r, {
+				if (!n || !Tw(n, o)) return;
+				let r = t.id || `${t.displayName}-${n.lat.toFixed(6)}-${n.lng.toFixed(6)}`, i = Sw(e.center, n), a = d.get(r), s = t.rating ? `${t.rating.toFixed(1)} stars${t.userRatingCount ? ` (${t.userRatingCount})` : ""}` : "";
+				(!a || e.sortOrder < a.zoneSortOrder || e.sortOrder === a.zoneSortOrder && i < a.distanceToZone) && d.set(r, {
 					id: r,
 					name: t.displayName || "Unnamed restaurant",
 					address: t.formattedAddress || "",
 					url: t.googleMapsURI || "",
 					location: n,
-					rating: o,
+					rating: s,
 					closestZone: e.label,
-					distanceToZone: i
+					distanceToZone: i,
+					zoneSortOrder: e.sortOrder
 				});
 			});
 		}
-		let u = Array.from(l.values()).sort((e, t) => e.distanceToZone - t.distanceToZone || e.name.localeCompare(t.name)), d = new c();
-		_w = u.map((t) => {
-			let n = new s({
+		let f = Array.from(d.values()).sort((e, t) => e.zoneSortOrder - t.zoneSortOrder || e.distanceToZone - t.distanceToZone || e.name.localeCompare(t.name)), p = new u();
+		_w = f.map((t) => {
+			let n = new l({
 				map: e,
 				position: t.location,
 				title: t.name
 			});
 			return n.addListener("gmp-click", () => {
-				d.setContent(Ow(t)), d.open({
+				p.setContent(jw(t)), p.open({
 					anchor: n,
 					map: e
 				});
 			}), n;
-		}), Dw(u, i);
+		}), Aw(f, a);
 	} catch (e) {
-		console.error(e), Ew("Could not find restaurants. Check that Places API is enabled for this key.");
+		console.error(e), kw("Could not find restaurants. Check that Places API is enabled for this key.");
 	} finally {
 		i.disabled = !1;
 	}
 }
 //#endregion
 //#region FriendMap/app.js
-var Aw = "AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE", jw = "12daf469cfd19e9d34767371", Mw = {
+var Nw = "AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE", Pw = "12daf469cfd19e9d34767371", Fw = {
 	lat: -34.92572531133676,
 	lng: 138.59971024043261
-}, Nw, Pw = [];
+}, Iw, Lw = [];
 NC({
-	key: Aw,
-	mapIds: [jw],
+	key: Nw,
+	mapIds: [Pw],
 	authReferrerPolicy: "origin"
 });
-function Fw(e, t, n = 365) {
+function Rw(e, t, n = 365) {
 	let r = /* @__PURE__ */ new Date();
 	r.setTime(r.getTime() + n * 24 * 60 * 60 * 1e3);
 	let i = `expires=${r.toUTCString()}`;
 	document.cookie = `${e}=${encodeURIComponent(JSON.stringify(t))};${i};path=/`;
 }
-function Iw(e) {
+function zw(e) {
 	let t = e + "=", n = document.cookie.split(";");
 	for (let e of n) if (e = e.trim(), e.indexOf(t) === 0) try {
 		return JSON.parse(decodeURIComponent(e.substring(t.length)));
@@ -23115,11 +23157,11 @@ function Iw(e) {
 	}
 	return null;
 }
-function Lw(e) {
+function Bw(e) {
 	let t = encodeURIComponent(JSON.stringify(e));
 	window.history.replaceState({}, "", `?locations=${t}`);
 }
-function Rw() {
+function Vw() {
 	let e = new URLSearchParams(window.location.search).get("locations");
 	if (e && e.length > 0) try {
 		return JSON.parse(decodeURIComponent(e));
@@ -23128,26 +23170,26 @@ function Rw() {
 	}
 	return null;
 }
-function zw(e) {
+function Hw(e) {
 	return Array.isArray(e) ? e.map((e) => ({
 		...e,
 		COORDINATES: [Number(e?.COORDINATES?.[0]), Number(e?.COORDINATES?.[1])],
 		SPACES: Number(e?.SPACES ?? 1)
 	})).filter((e) => Number.isFinite(e.COORDINATES[0]) && Number.isFinite(e.COORDINATES[1])) : [];
 }
-function Bw(e) {
-	return e.length ? [e.reduce((e, t) => e + t.COORDINATES[0], 0) / e.length, e.reduce((e, t) => e + t.COORDINATES[1], 0) / e.length] : [Mw.lng, Mw.lat];
+function Uw(e) {
+	return e.length ? [e.reduce((e, t) => e + t.COORDINATES[0], 0) / e.length, e.reduce((e, t) => e + t.COORDINATES[1], 0) / e.length] : [Fw.lng, Fw.lat];
 }
-function Vw(e) {
-	let t = zw(e);
-	Pw = t, ww(), Tw(), PC("maps").then(({ Map: e }) => {
+function Ww(e) {
+	let t = Hw(e);
+	Lw = t, Dw(), Ow(), PC("maps").then(({ Map: e }) => {
 		let n = new e(document.getElementById("map"), {
-			center: Mw,
+			center: Fw,
 			zoom: 16,
-			mapId: jw
+			mapId: Pw
 		});
-		Nw = n;
-		let [r, i] = Bw(t), a = [{ COORDINATES: [r, i] }], o = new eC({ layers: [t.length > 0 && new dw({
+		Iw = n;
+		let [r, i] = Uw(t), a = [{ COORDINATES: [r, i] }], o = new eC({ layers: [t.length > 0 && new dw({
 			id: "HeatmapLayer",
 			data: t,
 			opacity: .2,
@@ -23171,10 +23213,10 @@ function Vw(e) {
 			iconMapping: "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
 			pickable: !0
 		})].filter(Boolean) });
-		Fw("peopleLocations", t), Lw(t), o.setMap(n);
+		Rw("peopleLocations", t), Bw(t), o.setMap(n);
 	});
 }
-function Hw() {
+function Gw() {
 	let e = document.querySelectorAll("#people button"), t = [];
 	return e.forEach((e, n) => {
 		e.style.color === "blue" && t.push({
@@ -23184,43 +23226,43 @@ function Hw() {
 		});
 	}), t;
 }
-function Uw(e) {
+function Kw(e) {
 	let t = document.getElementById("people");
 	e?.forEach((e, n) => {
 		let r = document.createElement("button");
 		r.textContent = e.Name || `Person ${n + 1}`, r.style.color = "blue", r.setAttribute("data-long", e.COORDINATES[0]), r.setAttribute("data-lat", e.COORDINATES[1]), r.name = e.Name, r.addEventListener("click", () => {
 			r.style.color === "red" ? r.style.color = "blue" : r.style.color = "red";
-			let e = Hw();
-			Vw(e), Fw("peopleLocations", e);
+			let e = Gw();
+			Ww(e), Rw("peopleLocations", e);
 		}), t.appendChild(r);
 	});
 }
-function Ww() {
+function qw() {
 	let e = document.getElementById("name"), t = document.getElementById("lat"), n = document.getElementById("lng");
-	Uw([{
+	Kw([{
 		Name: e.value,
 		COORDINATES: [Number(n.value), Number(t.value)],
 		SPACES: 1
-	}]), Vw(Hw());
+	}]), Ww(Gw());
 }
-function Gw(e) {
+function Jw(e) {
 	let t = document.getElementById("menu"), n = document.getElementById("menu-toggle");
 	t.classList.toggle("is-minimised", e), n.setAttribute("aria-expanded", String(!e)), n.setAttribute("aria-label", e ? "Expand controls" : "Minimise controls"), n.title = e ? "Expand controls" : "Minimise controls", localStorage.setItem("friendMapControlsMinimised", String(e));
 }
-var Kw = Rw() ?? Iw("peopleLocations");
-Fw("peopleLocations", Kw), Lw(Kw), document.getElementById("menu-toggle").addEventListener("click", () => {
-	Gw(!document.getElementById("menu").classList.contains("is-minimised"));
+var Yw = Vw() ?? zw("peopleLocations");
+Rw("peopleLocations", Yw), Bw(Yw), document.getElementById("menu-toggle").addEventListener("click", () => {
+	Jw(!document.getElementById("menu").classList.contains("is-minimised"));
 }), document.getElementById("reload").addEventListener("click", () => {
-	Vw(Hw());
-}), document.getElementById("submit").addEventListener("click", Ww), document.getElementById("find-restaurants").addEventListener("click", () => {
-	kw({
-		map: Nw,
-		locationsData: Pw,
-		fallbackLocationsData: Hw(),
-		mapCenter: Mw
+	Ww(Gw());
+}), document.getElementById("submit").addEventListener("click", qw), document.getElementById("restaurant-sidebar-close").addEventListener("click", Ow), document.getElementById("find-restaurants").addEventListener("click", () => {
+	Mw({
+		map: Iw,
+		locationsData: Lw,
+		fallbackLocationsData: Gw(),
+		mapCenter: Fw
 	});
 }), document.addEventListener("readystatechange", (e) => {
-	e.target.readyState === "complete" && (Gw(localStorage.getItem("friendMapControlsMinimised") === "true"), Uw(Kw), Vw(Kw));
+	e.target.readyState === "complete" && (Jw(localStorage.getItem("friendMapControlsMinimised") === "true"), Kw(Yw), Ww(Yw));
 });
 //#endregion
-export { Vw as loadMap };
+export { Ww as loadMap };

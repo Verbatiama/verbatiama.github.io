@@ -1,10 +1,10 @@
 import { importLibrary } from "@googlemaps/js-api-loader";
 
 const RESTAURANT_SEARCH_RADIUS_METERS = 900;
-const HOT_ZONE_CLUSTER_RADIUS_METERS = 900;
 const MAX_RESTAURANT_ZONES = 6;
 const MAX_RESTAURANTS_PER_ZONE = 20;
 const EARTH_RADIUS_METERS = 6371000;
+const SINGLE_PERSON_BOUNDS_RADIUS_METERS = 900;
 
 let restaurantMarkers = [];
 
@@ -85,6 +85,80 @@ function distanceMeters(first, second) {
   );
 }
 
+function offsetLatLng(origin, northMeters, eastMeters) {
+  const latOffset = (northMeters / EARTH_RADIUS_METERS) * (180 / Math.PI);
+  const lngOffset =
+    (eastMeters /
+      (EARTH_RADIUS_METERS * Math.cos((origin.lat * Math.PI) / 180))) *
+    (180 / Math.PI);
+
+  return {
+    lat: origin.lat + latOffset,
+    lng: origin.lng + lngOffset,
+  };
+}
+
+function getPeopleBounds(locationsData) {
+  const locations = normalizeLocations(locationsData);
+
+  if (!locations.length) {
+    return null;
+  }
+
+  if (locations.length === 1) {
+    const center = toLatLngLiteral(locations[0].COORDINATES);
+    const southWest = offsetLatLng(
+      center,
+      -SINGLE_PERSON_BOUNDS_RADIUS_METERS,
+      -SINGLE_PERSON_BOUNDS_RADIUS_METERS,
+    );
+    const northEast = offsetLatLng(
+      center,
+      SINGLE_PERSON_BOUNDS_RADIUS_METERS,
+      SINGLE_PERSON_BOUNDS_RADIUS_METERS,
+    );
+
+    return {
+      north: northEast.lat,
+      south: southWest.lat,
+      east: northEast.lng,
+      west: southWest.lng,
+    };
+  }
+
+  return locations.reduce(
+    (bounds, location) => {
+      const [lng, lat] = location.COORDINATES;
+
+      return {
+        north: Math.max(bounds.north, lat),
+        south: Math.min(bounds.south, lat),
+        east: Math.max(bounds.east, lng),
+        west: Math.min(bounds.west, lng),
+      };
+    },
+    {
+      north: -Infinity,
+      south: Infinity,
+      east: -Infinity,
+      west: Infinity,
+    },
+  );
+}
+
+function isInsidePeopleBounds(location, bounds) {
+  if (!bounds) {
+    return true;
+  }
+
+  return (
+    location.lat <= bounds.north &&
+    location.lat >= bounds.south &&
+    location.lng <= bounds.east &&
+    location.lng >= bounds.west
+  );
+}
+
 function buildRestaurantSearchZones(locationsData, mapCenter) {
   const locations = normalizeLocations(locationsData);
   const centerCoordinates = getCenterCoordinates(locations, mapCenter);
@@ -93,35 +167,41 @@ function buildRestaurantSearchZones(locationsData, mapCenter) {
     {
       label: "centerpoint",
       center,
-      priority: locations.length + 1,
+      distanceToCenter: 0,
+      sortOrder: 0,
     },
   ];
 
-  const hotZones = locations
-    .map((location) => {
+  const peopleZones = locations
+    .map((location, index) => {
       const zoneCenter = toLatLngLiteral(location.COORDINATES);
-      const nearbyPeople = locations.filter((otherLocation) => {
-        const otherCenter = toLatLngLiteral(otherLocation.COORDINATES);
-        return (
-          distanceMeters(zoneCenter, otherCenter) <= HOT_ZONE_CLUSTER_RADIUS_METERS
-        );
-      }).length;
 
       return {
-        label: location.Name ? `${location.Name}'s red zone` : "friend red zone",
+        label: location.Name
+          ? `${location.Name}'s red zone`
+          : `Person ${index + 1}'s red zone`,
         center: zoneCenter,
-        priority: nearbyPeople,
+        distanceToCenter: distanceMeters(center, zoneCenter),
       };
     })
-    .sort((first, second) => second.priority - first.priority);
+    .sort(
+      (first, second) =>
+        first.distanceToCenter - second.distanceToCenter ||
+        first.label.localeCompare(second.label),
+    )
+    .map((zone, index) => ({
+      ...zone,
+      sortOrder: index + 1,
+    }));
 
-  for (const zone of hotZones) {
+  for (const zone of peopleZones) {
     if (zones.length >= MAX_RESTAURANT_ZONES) {
       break;
     }
 
     const overlapsExistingZone = zones.some(
       (existingZone) =>
+        existingZone.sortOrder > 0 &&
         distanceMeters(existingZone.center, zone.center) <
         RESTAURANT_SEARCH_RADIUS_METERS * 0.7,
     );
@@ -142,34 +222,40 @@ export function clearRestaurantMarkers() {
 }
 
 export function clearRestaurantResults() {
+  const sidebar = document.getElementById("restaurant-sidebar");
   const container = document.getElementById("restaurant-results");
   if (!container) {
     return;
   }
 
   container.replaceChildren();
-  container.classList.remove("is-visible");
+  sidebar?.classList.remove("is-visible");
+  sidebar?.setAttribute("aria-hidden", "true");
 }
 
 function showRestaurantStatus(message) {
+  const sidebar = document.getElementById("restaurant-sidebar");
   const container = document.getElementById("restaurant-results");
   const status = document.createElement("div");
   status.className = "restaurant-status";
   status.textContent = message;
   container.replaceChildren(status);
-  container.classList.add("is-visible");
+  sidebar?.classList.add("is-visible");
+  sidebar?.setAttribute("aria-hidden", "false");
 }
 
 function renderRestaurantResults(restaurants, zones) {
+  const sidebar = document.getElementById("restaurant-sidebar");
   const container = document.getElementById("restaurant-results");
   const status = document.createElement("div");
   status.className = "restaurant-status";
-  status.textContent = `${restaurants.length} restaurants found near ${zones.length} meetup zones`;
+  status.textContent = `${restaurants.length} restaurants found inside the people bounds`;
 
   if (!restaurants.length) {
-    status.textContent = "No restaurants found near the current meetup zones";
+    status.textContent = "No restaurants found inside the current people bounds";
     container.replaceChildren(status);
-    container.classList.add("is-visible");
+    sidebar?.classList.add("is-visible");
+    sidebar?.setAttribute("aria-hidden", "false");
     return;
   }
 
@@ -207,7 +293,8 @@ function renderRestaurantResults(restaurants, zones) {
   });
 
   container.replaceChildren(status, list);
-  container.classList.add("is-visible");
+  sidebar?.classList.add("is-visible");
+  sidebar?.setAttribute("aria-hidden", "false");
 }
 
 function createInfoWindowContent(restaurant) {
@@ -242,10 +329,14 @@ export async function findRestaurants({
   clearRestaurantMarkers();
 
   try {
+    const searchLocations = locationsData?.length
+      ? locationsData
+      : fallbackLocationsData;
     const zones = buildRestaurantSearchZones(
-      locationsData?.length ? locationsData : fallbackLocationsData,
+      searchLocations,
       mapCenter,
     );
+    const peopleBounds = getPeopleBounds(searchLocations);
     const [
       { Place, SearchNearbyRankPreference },
       { AdvancedMarkerElement },
@@ -279,7 +370,7 @@ export async function findRestaurants({
 
       places.forEach((place) => {
         const location = getPlaceLatLngLiteral(place.location);
-        if (!location) {
+        if (!location || !isInsidePeopleBounds(location, peopleBounds)) {
           return;
         }
 
@@ -296,7 +387,9 @@ export async function findRestaurants({
 
         if (
           !existingRestaurant ||
-          distanceToZone < existingRestaurant.distanceToZone
+          zone.sortOrder < existingRestaurant.zoneSortOrder ||
+          (zone.sortOrder === existingRestaurant.zoneSortOrder &&
+            distanceToZone < existingRestaurant.distanceToZone)
         ) {
           restaurantsById.set(id, {
             id,
@@ -307,6 +400,7 @@ export async function findRestaurants({
             rating,
             closestZone: zone.label,
             distanceToZone,
+            zoneSortOrder: zone.sortOrder,
           });
         }
       });
@@ -314,6 +408,7 @@ export async function findRestaurants({
 
     const restaurants = Array.from(restaurantsById.values()).sort(
       (first, second) =>
+        first.zoneSortOrder - second.zoneSortOrder ||
         first.distanceToZone - second.distanceToZone ||
         first.name.localeCompare(second.name),
     );

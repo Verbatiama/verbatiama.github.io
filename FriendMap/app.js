@@ -246,6 +246,9 @@ document.getElementById("reload").addEventListener("click", () => {
   loadMap(getEnabledPeople());
 });
 document.getElementById("submit").addEventListener("click", addLocation);
+document
+  .getElementById("restaurant-sidebar-close")
+  .addEventListener("click", clearRestaurantResults);
 document.getElementById("find-restaurants").addEventListener("click", () => {
   findRestaurants({
     map: activeMap,

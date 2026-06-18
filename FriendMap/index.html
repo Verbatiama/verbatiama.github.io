@@ -48,7 +48,25 @@
         <button id="reload">Reload</button>
         <button id="find-restaurants" type="button">Restaurants</button>
       </div>
-      <div id="restaurant-results" aria-live="polite"></div>
     </div>
+    <aside
+      id="restaurant-sidebar"
+      aria-labelledby="restaurant-sidebar-title"
+      aria-hidden="true"
+    >
+      <div class="restaurant-sidebar-header">
+        <div>
+          <span class="restaurant-sidebar-eyebrow">Restaurants</span>
+          <h2 id="restaurant-sidebar-title">Meetup picks</h2>
+        </div>
+        <button
+          id="restaurant-sidebar-close"
+          type="button"
+          aria-label="Close restaurant recommendations"
+          title="Close restaurant recommendations"
+        ></button>
+      </div>
+      <div id="restaurant-results" aria-live="polite"></div>
+    </aside>
   </body>
 </html>
