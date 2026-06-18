@@ -2,6 +2,9 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: "FriendMap",
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+  },
   build: {
     outDir: "assets",
     emptyOutDir: false,
