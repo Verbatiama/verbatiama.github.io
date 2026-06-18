@@ -84,7 +84,7 @@ export function loadMap(locationsData) {
         }),
         new IconLayer({
           id: "IconLayer",
-          getColor: (d) => [Math.sqrt(3616), 140, 0],
+          getColor: (d) => [0, 128, 0],
           getIcon: "marker",
           getPosition: [peopleCenterPointX, peopleCenterPointY],
           getSize: 40,
