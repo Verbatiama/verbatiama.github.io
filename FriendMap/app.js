@@ -5,14 +5,14 @@
 /* global document */
 import { GoogleMapsOverlay as DeckOverlay } from "@deck.gl/google-maps";
 import { IconLayer } from "@deck.gl/layers";
-import { Loader } from "@googlemaps/js-api-loader";
+import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
 // Set your Google Maps API key here or via environment variable
 const GOOGLE_MAPS_API_KEY = "AIzaSyBBal_6FUfvLnKGrXZh23bSaXfc_Uv_SZE"; // eslint-disable-line
 const GOOGLE_MAP_ID = "12daf469cfd19e9d34767371"; // eslint-disable-line
 
-const loader = new Loader({ apiKey: GOOGLE_MAPS_API_KEY });
+setOptions({ key: GOOGLE_MAPS_API_KEY });
 
 // Cookie utility functions
 function setCookie(name, value, days = 365) {
@@ -59,8 +59,8 @@ function getLocationFromUrl() {
 }
 
 export function loadMap(locationsData) {
-  loader.importLibrary("maps").then((googlemaps) => {
-    const map = new googlemaps.Map(document.getElementById("map"), {
+  importLibrary("maps").then(({ Map }) => {
+    const map = new Map(document.getElementById("map"), {
       center: { lat: -34.92572531133676, lng: 138.59971024043261 },
       zoom: 16,
       mapId: GOOGLE_MAP_ID,
@@ -127,7 +127,8 @@ function getEnabledPeople() {
 
 function renderLocationControls(peopleData) {
   const container = document.getElementById("people");
-  peopleData.forEach((person, index) => {
+
+  peopleData?.forEach((person, index) => {
     const button = document.createElement("button");
     button.textContent = person.Name || `Person ${index + 1}`;
     button.style.color = "blue";
