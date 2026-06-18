@@ -4,7 +4,6 @@
 
 /* global document */
 import { GoogleMapsOverlay as DeckOverlay } from "@deck.gl/google-maps";
-import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers";
 import { Loader } from "@googlemaps/js-api-loader";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
@@ -65,8 +64,12 @@ export function loadMap(locationsData) {
       zoom: 16,
       mapId: GOOGLE_MAP_ID,
     });
-    peopleCenterPointX = locationsData.reduce((sum, loc) => sum + loc.COORDINATES[0], 0) / locationsData.length;
-    peopleCenterPointY = locationsData.reduce((sum, loc) => sum + loc.COORDINATES[1], 0) / locationsData.length;
+    peopleCenterPointX =
+      locationsData.reduce((sum, loc) => sum + loc.COORDINATES[0], 0) /
+      locationsData.length;
+    peopleCenterPointY =
+      locationsData.reduce((sum, loc) => sum + loc.COORDINATES[1], 0) /
+      locationsData.length;
     const overlay = new DeckOverlay({
       layers: [
         new HeatmapLayer({
