@@ -112,19 +112,17 @@ function copySelectedText() {
 function toggleSelectAll() {
   const table = document.getElementById("apiTable");
   if (!table) return;
-  // Skip the header row (first row) so only data cells are affected
+  // Skip the header row (first row) and only toggle the first cell in each data row
   const rows = Array.from(table.rows).slice(1);
-  const cells = rows.flatMap((row) => Array.from(row.cells));
-  if (cells.length === 0) return;
-  const allSelected = cells.every((cell) =>
+  const nameCells = rows
+    .map((row) => row.cells[0])
+    .filter((cell) => cell !== undefined);
+  if (nameCells.length === 0) return;
+  const allSelected = nameCells.every((cell) =>
     cell.classList.contains("selected"),
   );
-  cells.forEach((cell) => {
-    if (allSelected) {
-      cell.classList.remove("selected");
-    } else {
-      cell.classList.add("selected");
-    }
+  nameCells.forEach((cell) => {
+    cell.classList.toggle("selected");
   });
 }
 
