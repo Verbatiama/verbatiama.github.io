@@ -103,6 +103,25 @@ function copySelectedText() {
     });
 }
 
+function toggleSelectAll() {
+  const table = document.getElementById("apiTable");
+  if (!table) return;
+  // Skip the header row (first row) so only data cells are affected
+  const rows = Array.from(table.rows).slice(1);
+  const cells = rows.flatMap((row) => Array.from(row.cells));
+  if (cells.length === 0) return;
+  const allSelected = cells.every((cell) =>
+    cell.classList.contains("selected"),
+  );
+  cells.forEach((cell) => {
+    if (allSelected) {
+      cell.classList.remove("selected");
+    } else {
+      cell.classList.add("selected");
+    }
+  });
+}
+
 let lastFilterFunction = null;
 let lastSortFunction = null;
 
