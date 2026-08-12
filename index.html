@@ -1,32 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<script type="text/javascript" src="index.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/highcharts.css">
-<link href="index.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="index.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://code.highcharts.com/css/highcharts.css"
+  />
+  <link href="index.css" rel="stylesheet" type="text/css" />
 
-<body>
-
-    <h1 style="text-align: center;">Adam's Legendary Creatures</h1>
-    <div style="text-align: center;" class="container">
-
-        <div class="gragh" style="z-index: 2;">
-            <div>
-                <p><span id="currentCards"></span></p>
-            </div>
-            <button onclick="fetchData(displayCocktail,(data) => true)">Full</button>
-            <button onclick="fetchData(displayCocktail,(data) => data.Owned == '0')">Not Owned</button>
-            <table id="apiTable" class="styled-table">
-                <!-- The table content will be dynamically generated -->
-            </table>
+  <body>
+    <h1 style="text-align: center">Adam's Legendary Creatures</h1>
+    <div style="text-align: center" class="container">
+      <div class="gragh" style="z-index: 2">
+        <div>
+          <p><span id="currentCards"></span></p>
         </div>
+        <button onclick="fetchData(displayCocktail, (data) => true)">
+          Full
+        </button>
+        <button
+          onclick="fetchData(displayCocktail, (data) => data.Owned == '0')"
+        >
+          Not Owned
+        </button>
+        <table id="apiTable" class="styled-table">
+          <!-- The table content will be dynamically generated -->
+        </table>
+      </div>
 
-        <div id="container" class="gragh" style="z-index: 1;">
-            <div id="pie-chart-container1"></div>
-            <div id="pie-chart-container2"></div>
-        </div>
-
+      <div id="container" class="gragh" style="z-index: 1">
+        <div id="pie-chart-container1"></div>
+        <div id="pie-chart-container2"></div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
