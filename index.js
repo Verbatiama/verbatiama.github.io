@@ -24,6 +24,12 @@ function displayCocktail(data) {
   });
 }
 
+function stripAfterBackslash(value) {
+  return String(value ?? "")
+    .replace(/\\.*$/g, "")
+    .trim();
+}
+
 let lastSortedColumn = null;
 let lastSortDirection = 1; // 1 for ascending, -1 for descending
 
@@ -90,7 +96,7 @@ function setEventListeners(cell) {
 function copySelectedText() {
   const selectedCells = document.querySelectorAll(".selected");
   const text = Array.from(selectedCells)
-    .map((cell) => cell.textContent)
+    .map((cell) => stripAfterBackslash(cell.textContent).trimEnd())
     .join("\n");
 
   navigator.clipboard
