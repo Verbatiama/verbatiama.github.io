@@ -1,40 +1,47 @@
 <!doctype html>
-<html>
-  <script type="text/javascript" src="index.js"></script>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <link
-    rel="stylesheet"
-    type="text/css"
-    href="https://code.highcharts.com/css/highcharts.css"
-  />
-  <link href="index.css" rel="stylesheet" type="text/css" />
-
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Adam Henderson</title>
+    <meta name="description" content="Adam Henderson — projects and experiments." />
+    <link href="site.css" rel="stylesheet" type="text/css" />
+  </head>
   <body>
-    <h1 style="text-align: center">Adam's Legendary Creatures</h1>
-    <div style="text-align: center" class="container">
-      <div class="gragh" style="z-index: 2">
-        <div>
-          <p><span id="currentCards"></span></p>
-        </div>
-        <button onclick="fetchData(displayCocktail, (data) => true)">
-          Full
-        </button>
-        <button
-          onclick="fetchData(displayCocktail, (data) => data.Owned == '0')"
-        >
-          Not Owned
-        </button>
-        <button onclick="copySelectedText()">Copy</button>
-        <button onclick="toggleSelectAll()">Select all</button>
-        <table id="apiTable" class="styled-table">
-          <!-- The table content will be dynamically generated -->
-        </table>
-      </div>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="site-name" href="/">Adam Henderson</a>
 
-      <div id="container" class="gragh" style="z-index: 1">
-        <div id="pie-chart-container1"></div>
-        <div id="pie-chart-container2"></div>
-      </div>
+        <h2>Projects</h2>
+        <ul class="project-list">
+          <li>
+            <a href="/LegendaryCreatures/">Legendary Creatures</a>
+            <span>Tracking my legendary card collection</span>
+          </li>
+          <li>
+            <a href="/Binder/">Card Binder</a>
+            <span>The collection, laid out as binder pages</span>
+          </li>
+          <li>
+            <a href="/FriendMap/">Maps with Friends</a>
+            <span>Map where friends are and find restaurants nearby</span>
+          </li>
+        </ul>
+
+        <a class="github" href="https://github.com/Verbatiama">GitHub</a>
+      </aside>
+
+      <main>
+        <p class="hello">Hello, I'm</p>
+        <h1>Adam Henderson</h1>
+        <p class="intro">
+          This is where I keep the small things I build: tools for my card
+          collection, map experiments, and whatever else I'm tinkering with.
+        </p>
+        <p>
+          <a href="https://github.com/Verbatiama">Find me on GitHub &rarr;</a>
+        </p>
+      </main>
     </div>
   </body>
 </html>

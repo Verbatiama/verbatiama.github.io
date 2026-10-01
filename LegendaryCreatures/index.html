@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Legendary Creatures</title>
+  </head>
+  <script type="text/javascript" src="index.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://code.highcharts.com/css/highcharts.css"
+  />
+  <link href="index.css" rel="stylesheet" type="text/css" />
+
+  <body>
+    <a href="/" style="position:fixed;top:8px;left:12px;z-index:10;font:14px system-ui,sans-serif;color:#c2410c;text-decoration:none">&larr; Adam Henderson</a>
+    <h1 style="text-align: center">Adam's Legendary Creatures</h1>
+    <div style="text-align: center" class="container">
+      <div class="gragh" style="z-index: 2">
+        <div>
+          <p><span id="currentCards"></span></p>
+        </div>
+        <button onclick="fetchData(displayCocktail, (data) => true)">
+          Full
+        </button>
+        <button
+          onclick="fetchData(displayCocktail, (data) => data.Owned == '0')"
+        >
+          Not Owned
+        </button>
+        <button onclick="copySelectedText()">Copy</button>
+        <button onclick="toggleSelectAll()">Select all</button>
+        <table id="apiTable" class="styled-table">
+          <!-- The table content will be dynamically generated -->
+        </table>
+      </div>
+
+      <div id="container" class="gragh" style="z-index: 1">
+        <div id="pie-chart-container1"></div>
+        <div id="pie-chart-container2"></div>
+      </div>
+    </div>
+  </body>
+</html>
