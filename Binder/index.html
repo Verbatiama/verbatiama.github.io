@@ -1,97 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<script type="text/javascript" src="binder.js"></script>
-
-<link href="binder.css" rel="stylesheet" type="text/css" />
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Card Binder</title>
-</head>
-
-<body>
-    <a href="/" style="position:fixed;top:8px;left:12px;z-index:10;font:14px system-ui,sans-serif;color:#c2410c;text-decoration:none">&larr; Adam Henderson</a>
-    <div class="binder-container">
-        <div class="binder">
-            <div class="binder-edge left" onclick="changePage(-2)" title="Previous"></div>
-            <div class="page" id="left-page">
-                <!-- Left page: 3x3 grid -->
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-            </div>
-            <div class="page" id="right-page">
-                <!-- Right page: 3x3 grid -->
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-                <div class="card-slot">
-                    <div class="card-placeholder"></div>
-                </div>
-            </div>
-            <div class="binder-edge right" onclick="changePage(2)" title="Next"></div>
-        </div>
-        <div class="page-numbers">
-            <span id="left-page-number">0</span>
-            <div class="jump-to-page">
-                <label for="jump-page-input">Jump to page:</label>
-                <input type="number" id="jump-page-input" min="1">
-                <button onclick="jumpToPage()">Go</button>
-            </div>
-            <span id="right-page-number">1</span>
-        </div>
-    </div>
-    <div id="card-overlay"
-        style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999;justify-content:center;align-items:center;">
-        <img id="card-overlay-img" src="" alt="Card Preview"
-            style="max-width:90vw;max-height:90vh;border-radius:16px;box-shadow:0 0 32px #000;">
-    </div>
-</body>
-
+    <script type="module" crossorigin src="./assets/index-2PfI9pvN.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CjU-dURq.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

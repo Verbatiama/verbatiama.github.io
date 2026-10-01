@@ -1,12 +1,19 @@
 {
   "scripts": {
-    "build:friendmap": "vite build --config vite.config.js"
+    "build:friendmap": "vite build --config vite.config.js",
+    "dev:binder": "vite --config vite.binder.config.js",
+    "build:binder": "vite build --config vite.binder.config.js"
   },
   "dependencies": {
     "@deck.gl/aggregation-layers": "^9.3.4",
     "@deck.gl/google-maps": "^9.3.4",
     "@deck.gl/layers": "^9.3.4",
     "@googlemaps/js-api-loader": "^2.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "vite": "^8.0.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1"
   }
 }
