@@ -68,20 +68,21 @@ body {
 .container {
     display: flex;
     flex-direction: column;
-    /* Default: stacked */
-}
-
-@media (orientation: landscape) {
-    .container {
-        flex-direction: row;
-        /* Side by side */
-    }
+    align-items: center;
+    /* List on top, pie charts stacked beneath */
 }
 
 .gragh {
-    width: 50%;
+    width: 100%;
+    max-width: 900px;
+    box-sizing: border-box;
     padding: 20px;
     text-align: center;
+}
+
+.styled-table {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .selected {
