@@ -6,6 +6,7 @@ function displayCocktail(data) {
   const row = tableBody.insertRow();
   sortableRow(row.insertCell(), "Name");
   sortableRow(row.insertCell(), "Owned");
+  sortableRow(row.insertCell(), "Set Name");
   sortableRow(row.insertCell(), "Price", true);
   sortableRow(row.insertCell(), "Book", true);
   sortableRow(row.insertCell(), "Page", true);
@@ -17,6 +18,7 @@ function displayCocktail(data) {
     cell.textContent = item.Name;
     setEventListeners(cell);
     row.insertCell().textContent = item.Owned;
+    row.insertCell().textContent = item["Set Name"];
     row.insertCell().textContent = item.Price;
     row.insertCell().textContent = item.Book;
     row.insertCell().textContent = item.Page;
@@ -44,12 +46,17 @@ function sortableRow(row, name, isNumeric = false) {
       lastSortDirection = 1;
     }
     fetchData(displayCocktail, null, (a, b) => {
+      const valA = String(a[name] ?? "").trim();
+      const valB = String(b[name] ?? "").trim();
+      // Missing values always sort to the bottom
+      if (!valA || !valB) return !valA - !valB;
       if (isNumeric) {
-        const numA = parseFloat(a[name].toString().replace("$", ""));
-        const numB = parseFloat(b[name].toString().replace("$", ""));
+        const numA = parseFloat(valA.replace(/[$,]/g, ""));
+        const numB = parseFloat(valB.replace(/[$,]/g, ""));
+        if (isNaN(numA) || isNaN(numB)) return isNaN(numA) - isNaN(numB);
         return (numA - numB) * lastSortDirection;
       }
-      return a[name].trim().localeCompare(b[name].trim()) * lastSortDirection;
+      return valA.localeCompare(valB) * lastSortDirection;
     });
   };
 }
