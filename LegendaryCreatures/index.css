@@ -76,11 +76,10 @@ body {
   box-sizing: border-box;
   padding: 20px;
   text-align: center;
-  overflow-x: auto;
 }
 
 .styled-table {
-  font-size: clamp(11px, calc((100vw - 80px) / 76), 0.9em);
+  font-size: clamp(7px, calc((100vw - 80px) / 76), 0.9em);
   margin-left: auto;
   margin-right: auto;
 }
