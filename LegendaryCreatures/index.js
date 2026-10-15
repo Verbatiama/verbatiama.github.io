@@ -8,9 +8,9 @@ function displayCocktail(data) {
   sortableRow(row.insertCell(), "Owned");
   sortableRow(row.insertCell(), "Set Name");
   sortableRow(row.insertCell(), "Price", true);
-  sortableRow(row.insertCell(), "Book", true);
-  sortableRow(row.insertCell(), "Page", true);
-  sortableRow(row.insertCell(), "Slot", true);
+  sortableRow(locationCell(row), "Book", true);
+  sortableRow(locationCell(row), "Page", true);
+  sortableRow(locationCell(row), "Slot", true);
 
   data.forEach((item) => {
     const row = tableBody.insertRow();
@@ -20,10 +20,24 @@ function displayCocktail(data) {
     row.insertCell().textContent = item.Owned;
     row.insertCell().textContent = item["Set Name"];
     row.insertCell().textContent = item.Price;
-    row.insertCell().textContent = item.Book;
-    row.insertCell().textContent = item.Page;
-    row.insertCell().textContent = item.Slot;
+    locationCell(row).textContent = item.Book;
+    locationCell(row).textContent = item.Page;
+    locationCell(row).textContent = item.Slot;
   });
+}
+
+function locationCell(row) {
+  const cell = row.insertCell();
+  cell.classList.add("location-col");
+  return cell;
+}
+
+function toggleLocationColumns() {
+  const table = document.getElementById("apiTable");
+  const hidden = table.classList.toggle("hide-location");
+  document.getElementById("toggleLocation").textContent = hidden
+    ? "Show location"
+    : "Hide location";
 }
 
 function stripAfterBackslash(value) {

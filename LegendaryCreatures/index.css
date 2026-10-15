@@ -84,6 +84,14 @@ body {
   margin-right: auto;
 }
 
+.styled-table.hide-location {
+  font-size: clamp(6px, calc((100vw - 80px) / 62), 0.9em);
+}
+
+.styled-table.hide-location .location-col {
+  display: none;
+}
+
 .selected {
   background-color: #66ccff;
   color: black;
