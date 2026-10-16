@@ -96,3 +96,47 @@ body {
   background-color: #66ccff;
   color: black;
 }
+
+#menuToggle {
+  position: fixed;
+  top: 30px;
+  left: 8px;
+  z-index: 30;
+  font-size: 22px;
+  line-height: 1;
+  padding: 4px 6px;
+  color: #c2410c;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 200px;
+  padding: 72px 16px 16px;
+  background-color: var(--background-color);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  transform: translateX(-110%);
+  transition: transform 0.2s ease;
+}
+
+#menu.open {
+  transform: translateX(0);
+}
+
+#menu button {
+  font:
+    16px system-ui,
+    sans-serif;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+}
