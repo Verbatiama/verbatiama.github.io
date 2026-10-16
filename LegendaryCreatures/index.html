@@ -100,12 +100,17 @@
           : "&uarr; Top";
       });
     </script>
-    <h1 style="text-align: center">Adam's Legendary Creatures</h1>
+    <h1 id="title">Adam's Legendary Creatures</h1>
+    <p id="cardCount"><span id="currentCards"></span></p>
+    <script>
+      // Current cards sticks just below the title, whatever height it wraps to
+      new ResizeObserver(() => {
+        document.getElementById("cardCount").style.top =
+          document.getElementById("title").offsetHeight + "px";
+      }).observe(document.getElementById("title"));
+    </script>
     <div style="text-align: center" class="container">
       <div class="content">
-        <div>
-          <p><span id="currentCards"></span></p>
-        </div>
         <table id="apiTable" class="styled-table">
           <!-- The table content will be dynamically generated -->
         </table>
