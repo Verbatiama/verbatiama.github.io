@@ -2,7 +2,8 @@
   "scripts": {
     "build:friendmap": "vite build --config vite.config.js",
     "dev:binder": "vite --config vite.binder.config.js",
-    "build:binder": "vite build --config vite.binder.config.js"
+    "build:binder": "vite build --config vite.binder.config.js",
+    "warm:images": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/warm-image-cache.mjs"
   },
   "dependencies": {
     "@deck.gl/aggregation-layers": "^9.3.4",
